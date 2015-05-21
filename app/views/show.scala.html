@@ -1,0 +1,30 @@
+@(users: List[User], tasks: List[Task])
+
+@main("Users / Tasks") {
+<table>
+    <tr>
+        <th>email</th>
+        <th>lastname</th>
+        <th>firstname</th>
+        <th>role</th>
+    </tr>
+    @for(user <- users) {
+    <tr>
+        <td>@user.email</td>
+        <td>@user.lastname</td>
+        <td>@user.firstname</td>
+        <td>@user.roleId</td>
+    </tr>
+    }
+</table>
+
+
+<br />
+<br />
+@for(task <- tasks) {
+<ul>
+    <li>@task.id: @task.task appears after @task.formerTaskId</li>
+</ul>
+
+}
+}
