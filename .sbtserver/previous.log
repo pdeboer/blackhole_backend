@@ -1,0 +1,65 @@
+New log file opened at Tue May 19 22:46:00 CEST 2015 by 11744@dAvE
+jvm 11744@dAvE
+jvm vmName=Java HotSpot(TM) 64-Bit Server VM vmVendor=Oracle Corporation vmVersion=25.31-b07
+jvm specName=Java Virtual Machine Specification specVendor=Oracle Corporation specVersion=1.8
+jvm arguments: [-Xms256m, -Xmx1024m, -XX:MetaspaceSize=64m, -XX:MaxMetaspaceSize=256m]
+Starting event engine
+Starting sbt command engine
+Waiting for sbt command engine
+Command engine arguments=List()
+Command engine baseDirectory=C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer
+Command engine initial remaining commands List(--initialize, onFailure load-failed, boot, server-send-ready-for-request, server-handle-next-server-request)
+> --initialize
+> initialize
+> onFailure load-failed
+> boot
+> reload
+[Loading] Scanning directory C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer\project
+[Loading] Found non-root projects 
+[Loading] Done in C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer\project, returning: ()
+deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin)))))
+  :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.JUnitXmlReportPlugin)
+sorting: ns: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.JUnitXmlReportPlugin)
+  :: sorting:: found: List(sbt.plugins.CorePlugin) not found List(sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.JUnitXmlReportPlugin)
+  :: sorting:: found: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin) not found List(sbt.plugins.JvmPlugin, sbt.plugins.JUnitXmlReportPlugin)
+  :: sorting:: found: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin) not found List(sbt.plugins.JUnitXmlReportPlugin)
+  :: sorting:: found: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.JUnitXmlReportPlugin) not found List()
+  :: sorted deduced result: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.JUnitXmlReportPlugin)
+[Loading] Done in C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer\project, returning: (pplibdataanalyzer-build)
+Loading project definition from C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer\project
+Running task... Cancel: sbt.TaskCancellationStrategy$Null$@3ddb2619, check cycles: false
+
+Initial source changes: 
+	removed:Set()
+	added: Set()
+	modified: Set()
+Removed products: Set()
+External API changes: API Changes: Set()
+Modified binary dependencies: Set()
+Initial directly invalidated sources: Set()
+
+Sources indirectly invalidated by:
+	product: Set()
+	binary dep: Set()
+	external source: Set()
+All initially invalidated sources: Set()
+
+Copy resource mappings: 
+	
+[Loading] Scanning directory C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer
+C:\Users\david_000\Desktop\work_space\typesafe-activator-1.3.2-minimal\activator-1.3.2-minimal\PPLibDataAnalyzer\build.sbt:16: error: type mismatch;
+ found   : sbt.ModuleID
+ required: sbt.internals.DslEntry
+"mysql" % "mysql-connector-java" % "5.1.27"
+                                 ^
+Type error in expression
+> load-failed
+Failed to load project.
+> server-wait-for-reboot
+Done executing sbt server engine, result Right(Exit(0))
+Closing listening server socket
+Waiting for socket thread
+Waiting for request processor thread
+Waiting for command engine result
+Returning control to sbt launcher with result Exit(0)
+Closing the 11744@dAvE logs at Tue May 19 22:46:44 CEST 2015, goodbye.
