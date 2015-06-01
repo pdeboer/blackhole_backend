@@ -1,30 +1,15 @@
-@(users: List[User], tasks: List[Task])
+@(email: String)
 
-@main("Users / Tasks") {
-<table>
-    <tr>
-        <th>email</th>
-        <th>lastname</th>
-        <th>firstname</th>
-        <th>role</th>
-    </tr>
-    @for(user <- users) {
-    <tr>
-        <td>@user.email</td>
-        <td>@user.lastname</td>
-        <td>@user.firstname</td>
-        <td>@user.roleId</td>
-    </tr>
-    }
-</table>
+@main("Admin Panel") {
 
+<h2>Hello @email!</h2><br />
 
-<br />
-<br />
-@for(task <- tasks) {
-<ul>
-    <li>@task.id: @task.task appears after @task.formerTaskId</li>
-</ul>
+<h3>please select what you like to do:</h3><br />
 
-}
+<a href="/userlist">Show users</a><br />
+<a href="/tasklist">Show tasks</a><br />
+<a href="/coordinatelist">Show Coordinates</a><br />
+<a href="">Admin open searches</a><br />
+<a href="/logout">Logout</a><br />
+
 }

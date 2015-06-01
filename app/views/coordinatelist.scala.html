@@ -1,0 +1,31 @@
+@(coordinates: List[Coordinate])
+
+@main("Coordinates") {
+<table>
+    <tr>
+        <th>Id</th>
+        <th>ra</th>
+        <th>dec</th>
+        <th>active</th>
+        <th>delete?</th>
+    </tr>
+    @for(coordinate <- coordinates) {
+    <tr>
+        <td>@coordinate.id</td>
+        <td>@coordinate.ra</td>
+        <td>@coordinate.dec</td>
+        <td>@coordinate.active</td>
+        <td>
+            <a href="/deletecoordinate/@coordinate.id">
+                <button type="button" class="btn btn-default btn-lg">
+                    <span style="color:red;" class="glyphicon glyphicon-remove"></span>
+                </button></a></td>
+    </tr>
+    }
+</table>
+
+<form method="post" autocomplete="on" action="insertcoordinate">
+    Ra:<input type="text" name="ra">Dec: <input type="text" name="dec"><br>
+    <input type="submit">
+    </form>
+}

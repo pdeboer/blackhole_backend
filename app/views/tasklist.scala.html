@@ -1,0 +1,12 @@
+@(tasks: List[Task])
+
+@main("Tasks") {
+
+@for(task <- tasks) {
+<ul>
+    <li>@task.id: @task.task appears after @task.formerTaskId</li>
+</ul>
+
+}
+
+}
