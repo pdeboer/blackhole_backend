@@ -1,12 +1,10 @@
 @(title: String)(content: Html)
 
-
-<!DOCTYPE html>
 <html>
 <head>
     <title>@title</title>
     <link rel='stylesheet' type='text/css' href='@routes.Assets.at("stylesheets/bootstrap.css")'>
-    <link rel='stylesheet' type='text/css' href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel='stylesheet' type='text/css' href='@routes.Assets.at("stylesheets/main.css")'>
     <script src='@routes.Assets.at("javascripts/jquery-1.11.3.min.js")' type='text/javascript'></script>
     <script src='@routes.Assets.at("javascripts/bootstrap.min.js")' type='text/javascript'></script>
     <script src='@routes.Assets.at("javascripts/products.js")' type='text/javascript'></script>
@@ -31,9 +29,14 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
+                        <li><a href="/">Home</a></li>
+                        <li class="divider"></li>
                         <li><a href="/userlist">List of Users</a></li>
                         <li><a href="/coordinatelist">List of Coordinates</a></li>
                         <li class="divider"></li>
+                        <li><a href="/taskloglist">Tasklog</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/logout">Logout</a></li>
                     </ul>
                 </li>
             </ul>

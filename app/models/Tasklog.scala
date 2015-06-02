@@ -32,10 +32,10 @@ object Tasklog {
     }
   }
 
-  def insertLog(tasklog: Tasklog): Option[Long] = {
+  def insertTasklog(uuid: String, question: String, answer: String): Option[Long] = {
     DB.withConnection { implicit connection =>
-      SQL("INSERT INTO tasklog VALUES ({uuid}, {question}, {answer})")
-        .on('uuid -> tasklog.uuid, 'question -> tasklog.question, 'answer -> tasklog.answer)
+      SQL("INSERT INTO tasklog(`uuid`, `question`, `answer`) VALUES ({uuid}, {question}, {answer})")
+        .on('uuid -> uuid, 'question -> question, 'answer -> answer)
         .executeInsert()
     }
   }

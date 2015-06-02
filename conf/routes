@@ -8,6 +8,7 @@ POST        /               controllers.Application.submitlogin
 #GET     /                           controllers.Application.index
 GET /users                          controllers.Users.list
 GET /tasks                          controllers.Tasks.list
+GET /taskloglist                          controllers.Application.taskloglist
 GET /tasklogs                          controllers.Tasklogs.list
 GET /tasklogs/:id                          controllers.Tasklogs.details(id: Int)
 GET /tasklist                   controllers.Application.tasklist
@@ -18,7 +19,7 @@ GET /coordinatelist                controllers.Application.coordinatelist
 POST /insertcoordinate           controllers.Coordinates.insertCoordinate
 GET /deletecoordinate/:id           controllers.Coordinates.deleteCoordinate(id: Int)
 GET /logout                     controllers.Application.logout
-#POST /tasklog                  controllers.Users.save()
+POST /tasklog                  controllers.Tasklogs.save
 GET /tasks/:id                   controllers.Tasks.details(id: Int)
 GET /users/:email                   controllers.Users.details(email: String)
 #PUT /users/:email                   controllers.Users.save(email: String)

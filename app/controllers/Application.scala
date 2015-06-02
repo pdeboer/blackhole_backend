@@ -3,7 +3,7 @@ package controllers
 import core.AuthAction
 import play.api.mvc._
 import views._
-import models.{User, Task, Coordinate}
+import models.{User, Task, Coordinate, Tasklog}
 import play.api._
 import play.api.mvc._
 import play.api.data._
@@ -44,6 +44,10 @@ object Application extends Controller {
 
   def tasklist = AuthAction {
     Ok(views.html.tasklist.render(Task.findAll()))
+  }
+
+  def taskloglist = AuthAction {
+    Ok(views.html.tasklog.render(Tasklog.findAll()))
   }
 
 

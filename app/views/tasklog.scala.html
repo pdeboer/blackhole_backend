@@ -1,0 +1,23 @@
+@(tasklogs: List[Tasklog])
+
+@main("Tasklog") {
+<h3>List of completed tasks:</h3>
+<table class="table table-striped">
+    <tr>
+        <th>task id</th>
+        <th>user uuid</th>
+        <th>question id</th>
+        <th>answer given</th>
+    </tr>
+    @for(log <- tasklogs) {
+    <tr>
+        <td>@log.id</td>
+        <td>@log.uuid</td>
+        <td>@log.question</td>
+        <td>@log.answer</td>
+    </tr>
+    }
+</table><br />
+
+
+}
