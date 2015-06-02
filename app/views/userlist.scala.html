@@ -1,12 +1,14 @@
 @(users: List[User])
 
 @main("Users") {
-<table>
+<h3>List of Users:</h3>
+<table class="table table-striped">
     <tr>
         <th>email</th>
         <th>lastname</th>
         <th>firstname</th>
         <th>role</th>
+        <th>Delete?</th>
     </tr>
     @for(user <- users) {
     <tr>
@@ -14,7 +16,39 @@
         <td>@user.lastname</td>
         <td>@user.firstname</td>
         <td>@user.roleId</td>
+        <td><a href="/deleteuser/@user.email"><span style="color:red;" class="glyphicon glyphicon-remove"></span></a></tr>
     </tr>
     }
-</table>
+</table><br />
+
+
+<h3>Create New User:</h3>
+<form method="post" autocomplete="on" action="insertuser">
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" class="form-control" id="email" placeholder="test@@example.com" name="email">
+    </div>
+    <div class="form-group">
+        <label for="firstname">Firstname:</label>
+        <input type="text" class="form-control" id="firstname" placeholder="Jane" name="firstname">
+    </div>
+    <div class="form-group">
+        <label for="lastname">Lastname:</label>
+        <input type="text" class="form-control" id="lastname" placeholder="Doe" name="lastname">
+    </div>
+    <div class="form-group">
+        <label for="roleId">Role:</label>
+        <select class="form-control" name="roleId" size="1" id="roleId" name="roleId">
+            <option value="1">User</option>
+            <option value="2">Superuser</option>
+            <option value="3" selected>Admin</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
 }

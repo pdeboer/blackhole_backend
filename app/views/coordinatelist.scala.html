@@ -1,7 +1,8 @@
 @(coordinates: List[Coordinate])
 
 @main("Coordinates") {
-<table>
+<h3>List of Coordinates:</h3>
+<table class="table table-striped">
     <tr>
         <th>Id</th>
         <th>ra</th>
@@ -14,18 +15,22 @@
         <td>@coordinate.id</td>
         <td>@coordinate.ra</td>
         <td>@coordinate.dec</td>
-        <td>@coordinate.active</td>
-        <td>
-            <a href="/deletecoordinate/@coordinate.id">
-                <button type="button" class="btn btn-default btn-lg">
-                    <span style="color:red;" class="glyphicon glyphicon-remove"></span>
-                </button></a></td>
-    </tr>
+        <td>@if(coordinate.active == 1) { <span style="color:green;" class="glyphicon glyphicon-ok"></span> } else {<span style="color:red;" class="glyphicon glyphicon-remove"></span>}</td>
+        <td><a href="/deletecoordinate/@coordinate.id"><span style="color:red;" class="glyphicon glyphicon-remove"></span></a></tr>
     }
-</table>
+</table><br /><br />
 
-<form method="post" autocomplete="on" action="insertcoordinate">
-    Ra:<input type="text" name="ra">Dec: <input type="text" name="dec"><br>
-    <input type="submit">
-    </form>
+<h3>Create New Coordinate-Pair:</h3>
+<form method="post" autocomplete="on" action="insertcoordinate" class="form-inline">
+    <div class="form-group">
+        <label for="ra">ra:</label>
+        <input type="text" class="form-control" id="ra" placeholder="1111.1111" name="ra">
+    </div>
+    <div class="form-group">
+        <label for="dec">dec:</label>
+        <input type="text" class="form-control" id="dec" placeholder="1111.1111" name="dec">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
 }

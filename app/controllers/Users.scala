@@ -2,6 +2,8 @@ package controllers
 
 import models.User
 import play.api.Logger
+import play.api.data._
+import play.api.data.Forms._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
@@ -9,14 +11,39 @@ import play.api.mvc.{Controller, _}
 /**
  * Controller for products HTTP interface.
  */
+
 object Users extends Controller {
 
+  val userForm = Form(
+    mapping(
+      "email" -> nonEmptyText,
+      "lastname" -> nonEmptyText,
+      "firstname" -> nonEmptyText,
+      "roleId" -> number,
+      "password" -> nonEmptyText
+    )(User.apply)(User.unapply)
+  )
   /**
    * Returns an array of products’ EAN codes.
    */
   def list = Action {
     val userEmails = User.findAll.map(_.email)
     Ok(Json.toJson(userEmails))
+  }
+
+  def insertUser = Action { implicit request =>
+      userForm.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.userlist.render(User.findAll())),
+      tempUser => {
+        val id = User.insertUser(tempUser.email, tempUser.lastname, tempUser.lastname, tempUser.roleId, tempUser.password)
+        Ok(views.html.userlist.render(User.findAll()))
+      })
+
+  }
+
+  def deleteUser(email: String) = Action { implicit request =>
+    val result = User.deleteUser(email)
+    Ok(views.html.userlist.render(User.findAll()))
   }
 
   /**
@@ -54,7 +81,7 @@ object Users extends Controller {
 
   /**
    * Saves a product
-   */
+
   def save(email: String) = Action(parse.json) { request =>
     Logger.info("start")
     try {
@@ -70,6 +97,6 @@ object Users extends Controller {
         BadRequest("Invalid EAN")
       }
     }
-  }
+  } */
 
 }

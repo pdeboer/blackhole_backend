@@ -12,6 +12,8 @@ GET /tasklogs                          controllers.Tasklogs.list
 GET /tasklogs/:id                          controllers.Tasklogs.details(id: Int)
 GET /tasklist                   controllers.Application.tasklist
 GET /userlist                   controllers.Application.userlist
+POST /insertuser        controllers.Users.insertUser
+GET /deleteuser/:email           controllers.Users.deleteUser(email: String)
 GET /coordinatelist                controllers.Application.coordinatelist
 POST /insertcoordinate           controllers.Coordinates.insertCoordinate
 GET /deletecoordinate/:id           controllers.Coordinates.deleteCoordinate(id: Int)
@@ -19,7 +21,7 @@ GET /logout                     controllers.Application.logout
 #POST /tasklog                  controllers.Users.save()
 GET /tasks/:id                   controllers.Tasks.details(id: Int)
 GET /users/:email                   controllers.Users.details(email: String)
-PUT /users/:email                   controllers.Users.save(email: String)
+#PUT /users/:email                   controllers.Users.save(email: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

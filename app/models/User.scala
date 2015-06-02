@@ -14,6 +14,8 @@ import anorm.SqlParser._
  * @param email User email
  * @param firstname User firstname
  * @param lastname User lastname
+ * @param roleId User roleId
+ * @param password User password
  */
 case class User(email: String, firstname: String, lastname: String, roleId: Int, password: String)
 
@@ -22,17 +24,6 @@ case class User(email: String, firstname: String, lastname: String, roleId: Int,
  */
 object User {
 
-
-  var users = Set(
-    User("david.pinezich@gmail.com", "David", "Pinezich", 1, "test"),
-    User("david.pinezich@gmail.com2", "David2", "Pinezich2", 1, "test1")
-  )
-
-
-
-  /**
-   * Products sorted by EAN code.
-   */
   def findAll(): List[User] = {
     DB.withConnection { implicit connection =>
       SQL("select * from users").as(User.simpleUser *)
@@ -63,6 +54,20 @@ object User {
       case email~firstname~lastname~roleId~password => User(email, firstname, lastname, roleId, password)
     }
   }
+
+  def insertUser(email: String, lastname: String, firstname: String, roleId: Int, password: String): Int = {
+    DB.withConnection( { implicit connection =>
+      SQL("INSERT INTO users(`email`, `lastname`, `firstname`, `roleId`, `password`) VALUES ({email}, {lastname}, {firstname}, {roleId}, {password})").on('email -> email, 'lastname -> lastname, 'firstname -> firstname, 'roleId -> roleId, 'password -> password).executeInsert()
+    })
+    1
+  }
+
+  def deleteUser(email: String): Int = {
+    DB.withConnection( { implicit connection =>
+      val result = SQL("DELETE FROM users WHERE `email` = {email}").on('email -> email).executeUpdate()
+    })
+    1
+  }
 /*
   def findAll = this.users.toList.sortBy(_.email)
 */
@@ -74,12 +79,12 @@ object User {
 
   /**
    * Saves a product to the catalog.
-   */
+
   def save(user: User) = {
     findByEmail(user.email).map( oldUser =>
-      this.users = this.users - oldUser + user
+      this.user = this.user - oldUser + user
     ).getOrElse(
         throw new IllegalArgumentException("User not found")
       )
-  }
+  } */
 }
