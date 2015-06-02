@@ -6,19 +6,24 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
-/**
- * Controller for products HTTP interface.
- */
+
 object Tasklogs extends Controller {
 
+  /**
+   * List all log events to a Json format
+   *
+   * @return void
+   */
   def list = Action {
     val allTasks = Tasklog.findAll.map(_.uuid)
     Ok(Json.toJson(allTasks))
   }
+
   /**
-   * Formats a Product instance as JSON.
+   * Json write object
+   *
    */
-  implicit object UserWrites extends Writes[Tasklog] {
+  implicit object tasklogWrites extends Writes[Tasklog] {
     def writes(t: Tasklog) = Json.obj(
       "id" -> Json.toJson(t.id),
       "uuid" -> Json.toJson(t.uuid),
@@ -28,7 +33,10 @@ object Tasklogs extends Controller {
   }
 
   /**
-   * Returns details of the given product.
+   * Details of the Tasklog
+   *
+   * @param id
+   * @return
    */
   def details(id: Int) = Action {
     Tasklog.findById(id).map { tasklog =>
@@ -37,9 +45,9 @@ object Tasklogs extends Controller {
   }
 
   /**
-   * Parses a JSON object
+   * Parses the json object
    */
-  implicit val userReads: Reads[Tasklog] = (
+  implicit val tasklogReads: Reads[Tasklog] = (
     (JsPath \ "id").read[Int] and
       (JsPath \ "uuid").read[String] and
       (JsPath \ "question").read[String] and
@@ -48,7 +56,7 @@ object Tasklogs extends Controller {
 
 
   def save() = Action(parse.json) { request =>
-    Logger.info("start")
+    //Logger.info("start")
     try {
       val tasklogJson = request.body
       val log = tasklogJson.as[Tasklog] //@todo set id as optional

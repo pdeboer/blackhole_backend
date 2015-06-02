@@ -8,12 +8,9 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
-/**
- * Controller for products HTTP interface.
- */
-
 object Users extends Controller {
 
+  // User Form
   val userForm = Form(
     mapping(
       "email" -> nonEmptyText,
@@ -23,14 +20,22 @@ object Users extends Controller {
       "password" -> nonEmptyText
     )(User.apply)(User.unapply)
   )
+
   /**
-   * Returns an array of products’ EAN codes.
+   * List "all" users by email
+   *
+   * @return List Json
    */
   def list = Action {
     val userEmails = User.findAll.map(_.email)
     Ok(Json.toJson(userEmails))
   }
 
+  /**
+   * Inserts an User
+   *
+   * @return void
+   */
   def insertUser = Action { implicit request =>
       userForm.bindFromRequest().fold(
       formWithErrors => BadRequest(views.html.userlist.render(User.findAll())),
@@ -41,13 +46,20 @@ object Users extends Controller {
 
   }
 
+  /**
+   * Delete an User
+   *
+   * @param email
+   * @return void
+   */
   def deleteUser(email: String) = Action { implicit request =>
     val result = User.deleteUser(email)
     Ok(views.html.userlist.render(User.findAll()))
   }
 
   /**
-   * Formats a Product instance as JSON.
+   * Writes an User by Json Obj
+   * @todo see if this distracts the frontend users
    */
   implicit object UserWrites extends Writes[User] {
     def writes(p: User) = Json.obj(
@@ -60,7 +72,10 @@ object Users extends Controller {
   }
 
   /**
-   * Returns details of the given product.
+   * Lists details of all Users
+   *
+   * @param email
+   * @return void
    */
   def details(email: String) = Action {
     User.findByEmail(email).map { user =>
@@ -69,7 +84,7 @@ object Users extends Controller {
   }
 
   /**
-   * Parses a JSON object
+   * Parses the User Json Object
    */
   implicit val userReads: Reads[User] = (
     (JsPath \ "email").read[String] and
@@ -79,24 +94,5 @@ object Users extends Controller {
       (JsPath \ "password").read[String]
     )(User.apply _)
 
-  /**
-   * Saves a product
-
-  def save(email: String) = Action(parse.json) { request =>
-    Logger.info("start")
-    try {
-      val userJson = request.body
-      val user = userJson.as[User]
-      User.save(user)
-      Ok("Saved")
-    }
-    catch {
-      case e:IllegalArgumentException => BadRequest("User not found")
-      case e:Exception => {
-        Logger.info("exception = %s" format e)
-        BadRequest("Invalid EAN")
-      }
-    }
-  } */
 
 }

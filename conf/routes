@@ -19,6 +19,7 @@ GET /coordinatelist                controllers.Application.coordinatelist
 POST /insertcoordinate           controllers.Coordinates.insertCoordinate
 GET /deletecoordinate/:id           controllers.Coordinates.deleteCoordinate(id: Int)
 GET /logout                     controllers.Application.logout
+GET /show                     controllers.Application.show
 POST /tasklog                  controllers.Tasklogs.save
 GET /tasks/:id                   controllers.Tasks.details(id: Int)
 GET /users/:email                   controllers.Users.details(email: String)

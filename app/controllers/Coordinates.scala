@@ -8,13 +8,10 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
-import scala.text
 
-/**
- * Controller for products HTTP interface.
- */
 object Coordinates extends Controller {
 
+  // Coordinates Form
   val coordinatesForm = Form(
     tuple(
       "ra" -> nonEmptyText,
@@ -22,7 +19,11 @@ object Coordinates extends Controller {
     )
   )
 
-
+  /**
+   * Insert a pair of Coordinates
+   *
+   * @return void
+   */
   def insertCoordinate = Action { implicit request =>
     val (ra, dec) = coordinatesForm.bindFromRequest.get
     val Id = Coordinate.insertCoordinate(ra, dec)
@@ -30,17 +31,32 @@ object Coordinates extends Controller {
   }
 
 
+  /**
+   * Delete a pair of coordinates
+   *
+   * @param Id Int
+   * @return void
+   */
   def deleteCoordinate(Id: Int) = Action { implicit request =>
     val result = Coordinate.deleteCoordinate(Id)
     Ok(views.html.coordinatelist.render(Coordinate.findAll()))
   }
 
+  // Json part
+
+  /**
+   * List all Coordinates
+   *
+   * @return void
+   */
   def list = Action {
     val allCoordinates = Coordinate.findAll.map(_.id)
     Ok(Json.toJson(allCoordinates))
   }
+
   /**
-   * Formats a Product instance as JSON.
+   * Json Write container
+   *
    */
   implicit object CoordinateWrites extends Writes[Coordinate] {
     def writes(c: Coordinate) = Json.obj(
@@ -52,7 +68,9 @@ object Coordinates extends Controller {
   }
 
   /**
-   * Returns details of the given product.
+   * Return Json view of detail coordinates
+   * @param id Int
+   * @return Coordinates Json
    */
   def detailCoordinate(id: Int) = Action {
     Coordinate.findById(id).map { coordinate =>
@@ -61,7 +79,8 @@ object Coordinates extends Controller {
   }
 
   /**
-   * Parses a JSON object
+   * Parses a JSON object of Coordinates
+   * @todo write explanation
    */
   implicit val userReads: Reads[Coordinate] = (
     (JsPath \ "id").read[Int] and

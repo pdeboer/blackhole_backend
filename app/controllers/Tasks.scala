@@ -6,11 +6,14 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
-/**
- * Controller for products HTTP interface.
- */
+
 object Tasks extends Controller {
 
+  /**
+   * List tasks as a json representation
+   *
+   * @return Tasks Json
+   */
   def list = Action {
     val allTasks = Task.findAll.map(_.task)
     Ok(Json.toJson(allTasks))
@@ -32,7 +35,10 @@ object Tasks extends Controller {
   }
 
   /**
-   * Returns details of the given product.
+   * Returns details of the task Json formatted
+   *
+   * @param id Int
+   * @return void
    */
   def details(id: Int) = Action {
     Task.findById(id).map { task =>

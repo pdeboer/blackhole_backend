@@ -1,15 +1,15 @@
 package controllers
 
 import core.AuthAction
-import play.api.mvc._
 import views._
 import models.{User, Task, Coordinate, Tasklog}
-import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
 object Application extends Controller {
+
+  // The user login Tuple
   val form = Form(
     tuple(
       "email" -> text,
@@ -30,7 +30,7 @@ object Application extends Controller {
   /**
    * Submit of the login tuple for the admin services
    *
-   * @return
+   * @return void
    */
   def submitlogin = Action { implicit request =>
     val (email, password) = form.bindFromRequest.get
@@ -41,21 +41,51 @@ object Application extends Controller {
     }
 }
 
-
+  /**
+   * Show tasklist
+   *
+   * @return void
+   */
   def tasklist = AuthAction {
     Ok(views.html.tasklist.render(Task.findAll()))
   }
 
+  /**
+   * Shows the index
+   * @return
+   */
+  def show = Action { request =>
+    request.session.get("active").map { email =>
+      Ok(views.html.show.render(email))
+    }.getOrElse {
+      Unauthorized("Not connected")
+    }
+  }
+  /**
+   * Show list of logged tasks
+   *
+   * @return void
+   */
   def taskloglist = AuthAction {
     Ok(views.html.tasklog.render(Tasklog.findAll()))
   }
 
 
+  /**
+   * Show list of users
+   *
+   * @return void
+   */
   def userlist = AuthAction {
     Ok(views.html.userlist.render(User.findAll()))
   }
 
 
+  /**
+   * Show list of coordinates
+   *
+   * @return void
+   */
   def coordinatelist = AuthAction {
     Ok(views.html.coordinatelist.render(Coordinate.findAll()))
   }
