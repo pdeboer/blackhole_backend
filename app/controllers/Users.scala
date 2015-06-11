@@ -17,6 +17,7 @@ object Users extends Controller {
       "lastname" -> nonEmptyText,
       "firstname" -> nonEmptyText,
       "roleId" -> number,
+      "active" -> number,
       "password" -> nonEmptyText
     )(User.apply)(User.unapply)
   )
@@ -67,6 +68,7 @@ object Users extends Controller {
       "firstname" -> Json.toJson(p.firstname),
       "lastname" -> Json.toJson(p.lastname),
       "roleId" -> Json.toJson(p.roleId),
+      "active" -> Json.toJson(p.active),
       "password" -> Json.toJson(p.password)
     )
   }
@@ -91,6 +93,7 @@ object Users extends Controller {
       (JsPath \ "firstname").read[String] and
       (JsPath \ "lastname").read[String] and
       (JsPath \ "roleId").read[Int] and
+      (JsPath \ "active").read[Int] and
       (JsPath \ "password").read[String]
     )(User.apply _)
 

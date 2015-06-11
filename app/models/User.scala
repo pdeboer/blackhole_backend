@@ -15,9 +15,10 @@ import anorm.SqlParser._
  * @param firstname User firstname
  * @param lastname User lastname
  * @param roleId User roleId
+ * @param active User active
  * @param password User password
  */
-case class User(email: String, firstname: String, lastname: String, roleId: Int, password: String)
+case class User(email: String, firstname: String, lastname: String, roleId: Int, active: Int, password: String)
 
 /**
  * Products data access
@@ -50,8 +51,9 @@ object User {
       get[String]("firstname") ~
       get[String]("lastname") ~
         get[Int]("roleId") ~
+        get[Int]("active") ~
       get[String]("password") map {
-      case email~firstname~lastname~roleId~password => User(email, firstname, lastname, roleId, password)
+      case email~firstname~lastname~roleId~active~password => User(email, firstname, lastname, roleId, active, password)
     }
   }
 

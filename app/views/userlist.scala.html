@@ -8,6 +8,7 @@
         <th>lastname</th>
         <th>firstname</th>
         <th>role</th>
+        <th>active</th>
         <th>Delete?</th>
     </tr>
     @for(user <- users) {
@@ -16,6 +17,7 @@
         <td>@user.lastname</td>
         <td>@user.firstname</td>
         <td>@user.roleId</td>
+        <td>@if(user.active == 1) { <span style="color:green;" class="glyphicon glyphicon-ok"></span> } else { <span style="color:red;" class="glyphicon glyphicon-remove"></span>}</td>
         <td><a href="/deleteuser/@user.email"><span style="color:red;" class="glyphicon glyphicon-remove"></span></a></tr>
     </tr>
     }
