@@ -17,3 +17,4 @@ dist
 /project/*-shim.sbt
 /activator-sbt-atmos-akka-shim.sbt
 *.log
+project/.sbtserver
