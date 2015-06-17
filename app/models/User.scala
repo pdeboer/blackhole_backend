@@ -17,8 +17,9 @@ import anorm.SqlParser._
  * @param roleId User roleId
  * @param active User active
  * @param password User password
+ * @param uuid User uuid
  */
-case class User(email: String, firstname: String, lastname: String, roleId: Int, active: Int, password: String)
+case class User(email: String, firstname: String, lastname: String, roleId: Int, active: Int, password: String, uuid: String)
 
 /**
  * Products data access
@@ -39,7 +40,7 @@ object User {
 
   def findByEmailAndPassword(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from users WHERE email = {email} AND password = {password}")
+      SQL("select * from users WHERE email = {email} AND password = {password} AND active = 1")
         .on('email -> email)
         .on('password -> password)
         .as(User.simpleUser.singleOpt)
@@ -52,14 +53,16 @@ object User {
       get[String]("lastname") ~
         get[Int]("roleId") ~
         get[Int]("active") ~
-      get[String]("password") map {
-      case email~firstname~lastname~roleId~active~password => User(email, firstname, lastname, roleId, active, password)
+      get[String]("password")~
+        get[String]("uuid") map {
+      case email~firstname~lastname~roleId~active~password~uuid => User(email, firstname, lastname, roleId, active, password, uuid)
     }
   }
 
   def insertUser(email: String, lastname: String, firstname: String, roleId: Int, password: String): Int = {
+    val uuid = java.util.UUID.randomUUID.toString //@ToDo test for double random uuids
     DB.withConnection( { implicit connection =>
-      SQL("INSERT INTO users(`email`, `lastname`, `firstname`, `roleId`, `password`) VALUES ({email}, {lastname}, {firstname}, {roleId}, {password})").on('email -> email, 'lastname -> lastname, 'firstname -> firstname, 'roleId -> roleId, 'password -> password).executeInsert()
+      SQL("INSERT INTO users(`email`, `lastname`, `firstname`, `roleId`, `password`, `uuid`) VALUES ({email}, {lastname}, {firstname}, {roleId}, {password}, {uuid})").on('email -> email, 'lastname -> lastname, 'firstname -> firstname, 'roleId -> roleId, 'password -> password, 'uuid -> uuid).executeInsert()
     })
     1
   }
@@ -70,23 +73,21 @@ object User {
     })
     1
   }
-/*
-  def findAll = this.users.toList.sortBy(_.email)
-*/
-  /**
-   * The product with the given EAN code.
-   */
- // def findByEmail(email: String) = this.users.find(_.email == email)
 
+  def changeActiveUser(email: String): Int = {
+    DB.withConnection( { implicit connection =>
+      val checkState = SQL("SELECT active as active FROM users WHERE `email` = {email}").on('email -> email).apply().head
+      val oldState = checkState[Int]("active")
+      var newState = 1
+      if(oldState == 1) {
+        newState = 0
+      }
+      val result = SQL("UPDATE users SET `active` = {active} WHERE `email` = {email}")
+        .on('active -> newState)
+        .on('email -> email)
+        .executeUpdate()
+    })
+    1
+  }
 
-  /**
-   * Saves a product to the catalog.
-
-  def save(user: User) = {
-    findByEmail(user.email).map( oldUser =>
-      this.user = this.user - oldUser + user
-    ).getOrElse(
-        throw new IllegalArgumentException("User not found")
-      )
-  } */
 }

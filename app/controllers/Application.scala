@@ -77,7 +77,10 @@ object Application extends Controller {
    * @return void
    */
   def userlist = AuthAction {
-    Ok(views.html.userlist.render(User.findAll()))
+    val flash = play.api.mvc.Flash(Map(
+
+    ))
+    Ok(views.html.userlist.render(User.findAll(), flash))
   }
 
 

@@ -1,4 +1,21 @@
-@(users: List[User])
+@(users: List[User])(implicit flash: Flash)
+
+@flash.get("error").map { errorMessage =>
+<div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+   @errorMessage
+</div>
+}
+
+@flash.get("success").map { successMessage =>
+<div class="alert alert-success" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Success:</span>
+    @successMessage
+</div>
+
+}
 
 @main("Users") {
 <h3>List of Users:</h3>
@@ -10,7 +27,7 @@
         <th>firstname</th>
         <th>role</th>
         <th>active</th>
-        <th>Delete?</th>
+        <th>delete?</th>
     </tr>
     </thead>
 
@@ -21,7 +38,7 @@
         <th>firstname</th>
         <th>role</th>
         <th>active</th>
-        <th>Delete?</th>
+        <th>delete?</th>
     </tr>
     </tfoot>
     <tbody>
@@ -37,7 +54,7 @@
             case 3 => {<span style="color:red;">Admin</span>}
             }
         </td>
-        <td>@if(user.active == 1) { <span style="color:green;" class="glyphicon glyphicon-ok"></span> } else { <span style="color:red;" class="glyphicon glyphicon-remove"></span>}</td>
+        <td><a href="/changeactive/@user.email">@if(user.active == 1) { <span style="color:green;" class="glyphicon glyphicon-ok"></span> } else { <span style="color:red;" class="glyphicon glyphicon-remove"></span>}</a></td>
         <td><a href="/deleteuser/@user.email"><span style="color:red;" class="glyphicon glyphicon-remove"></span></a></td>
     </tr>
     }
@@ -53,7 +70,7 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form method="post" autocomplete="on" action="insertuser">
+            <form method="post" autocomplete="on" action="/insertuser">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">Create New User:</h4>
@@ -63,6 +80,7 @@
                         <label for="email">Email:</label>
                         <input type="email" class="form-control" id="email" placeholder="test@@example.com" name="email">
                         <input type="hidden" class="" id="active" placeholder="1" value="1" name="active">
+                        <input type="hidden" class="" id="uuid" placeholder="uuid" value="uuid" name="uuid">
                     </div>
                     <div class="form-group">
                         <label for="firstname">Firstname:</label>
@@ -95,6 +113,5 @@
 
     </div>
 </div>
-
 
 }

@@ -18,7 +18,8 @@ object Users extends Controller {
       "firstname" -> nonEmptyText,
       "roleId" -> number,
       "active" -> number,
-      "password" -> nonEmptyText
+      "password" -> nonEmptyText,
+      "uuid" -> nonEmptyText
     )(User.apply)(User.unapply)
   )
 
@@ -38,11 +39,15 @@ object Users extends Controller {
    * @return void
    */
   def insertUser = Action { implicit request =>
+    val flash = play.api.mvc.Flash(Map("error" -> "User was not inserted"))
       userForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.html.userlist.render(User.findAll())),
+      formWithErrors => BadRequest(views.html.userlist.render(User.findAll(), flash)),
       tempUser => {
         val id = User.insertUser(tempUser.email, tempUser.lastname, tempUser.lastname, tempUser.roleId, tempUser.password)
-        Ok(views.html.userlist.render(User.findAll()))
+        val flash = play.api.mvc.Flash(Map(
+          "success" -> "User was succesfully inserted"
+        ))
+        Ok(views.html.userlist.render(User.findAll(), flash))
       })
 
   }
@@ -55,7 +60,24 @@ object Users extends Controller {
    */
   def deleteUser(email: String) = Action { implicit request =>
     val result = User.deleteUser(email)
-    Ok(views.html.userlist.render(User.findAll()))
+    val flash = play.api.mvc.Flash(Map(
+      "success" -> "User was succesfully deleted"
+    ))
+    Ok(views.html.userlist.render(User.findAll(), flash))
+  }
+
+  /**
+   * Change active state
+   *
+   * @param email
+   * @return void
+   */
+  def changeActiveUser(email: String) = Action { implicit request =>
+    val result = User.changeActiveUser(email)
+    val flash = play.api.mvc.Flash(Map(
+      "success" -> "active state was successfully changed"
+    ))
+    Ok(views.html.userlist.render(User.findAll(), flash))
   }
 
   /**
@@ -69,7 +91,8 @@ object Users extends Controller {
       "lastname" -> Json.toJson(p.lastname),
       "roleId" -> Json.toJson(p.roleId),
       "active" -> Json.toJson(p.active),
-      "password" -> Json.toJson(p.password)
+      "password" -> Json.toJson(p.password),
+      "uuid" -> Json.toJson(p.uuid)
     )
   }
 
@@ -94,7 +117,8 @@ object Users extends Controller {
       (JsPath \ "lastname").read[String] and
       (JsPath \ "roleId").read[Int] and
       (JsPath \ "active").read[Int] and
-      (JsPath \ "password").read[String]
+      (JsPath \ "password").read[String] and
+        (JsPath \ "uuid").read[String]
     )(User.apply _)
 
 

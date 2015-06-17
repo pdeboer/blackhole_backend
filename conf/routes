@@ -40,6 +40,7 @@ GET /users/:email                   controllers.Users.details(email: String)
 GET /userlist                   controllers.Application.userlist
 POST /insertuser        controllers.Users.insertUser
 GET /deleteuser/:email           controllers.Users.deleteUser(email: String)
+GET /changeactive/:email           controllers.Users.changeActiveUser(email: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
