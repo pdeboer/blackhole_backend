@@ -6,24 +6,40 @@
 GET         /                     controllers.Application.login
 POST        /               controllers.Application.submitlogin
 #GET     /                           controllers.Application.index
-GET /users                          controllers.Users.list
+
+
+GET /taskloglist               controllers.Application.taskloglist
+
+GET /tasklist                  controllers.Application.tasklist
+
+
+#Coordinatelist
+GET /coordinatelist            controllers.Application.coordinatelist
+POST /insertcoordinate         controllers.Coordinates.insertCoordinate
+GET /deletecoordinate/:id      controllers.Coordinates.deleteCoordinate(id: Int)
+
+#General
+GET /logout                    controllers.Application.logout
+GET /show                      controllers.Application.show
+
+#Tasklog
+POST /tasklog                  controllers.Tasklogs.save
+GET /tasklogs                  controllers.Tasklogs.list
+GET /tasklogs/:id              controllers.Tasklogs.details(id: Int)
+
+# Tasks
 GET /tasks                          controllers.Tasks.list
-GET /taskloglist                          controllers.Application.taskloglist
-GET /tasklogs                          controllers.Tasklogs.list
-GET /tasklogs/:id                          controllers.Tasklogs.details(id: Int)
-GET /tasklist                   controllers.Application.tasklist
+GET /tasks/:id                   controllers.Tasks.details(id: Int)
+GET /tasks/detailsHtml:id                   controllers.Tasks.detailsHtml(id: Int)
+GET /tasks/getNext/:id                   controllers.Tasks.getNext(id: Int)
+
+#Users
+GET /users                          controllers.Users.list
+GET /users/:email                   controllers.Users.details(email: String)
+#PUT /users/:email                   controllers.Users.save(email: String)
 GET /userlist                   controllers.Application.userlist
 POST /insertuser        controllers.Users.insertUser
 GET /deleteuser/:email           controllers.Users.deleteUser(email: String)
-GET /coordinatelist                controllers.Application.coordinatelist
-POST /insertcoordinate           controllers.Coordinates.insertCoordinate
-GET /deletecoordinate/:id           controllers.Coordinates.deleteCoordinate(id: Int)
-GET /logout                     controllers.Application.logout
-GET /show                     controllers.Application.show
-POST /tasklog                  controllers.Tasklogs.save
-GET /tasks/:id                   controllers.Tasks.details(id: Int)
-GET /users/:email                   controllers.Users.details(email: String)
-#PUT /users/:email                   controllers.Users.save(email: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

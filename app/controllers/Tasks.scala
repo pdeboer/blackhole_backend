@@ -47,6 +47,25 @@ object Tasks extends Controller {
   }
 
   /**
+   * Returns details of the task Json formatted
+   *
+   * @param id Int
+   * @return void
+   */
+  def getNext(id: Int) = Action {
+    val newId = id + 1;
+    Task.findById(newId).map { nextTask =>
+      Ok(Json.toJson(nextTask))
+    }.getOrElse(NotFound)
+  }
+
+  def detailsHtml(id: Int) = Action {
+    Task.findById(id).map { task =>
+      Ok(Json.toJson(task))
+    }.getOrElse(NotFound)
+  }
+
+  /**
    * Parses a JSON object
    */
   implicit val userReads: Reads[Task] = (
