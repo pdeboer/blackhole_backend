@@ -1,39 +1,21 @@
 @(message: String)
 
 @main("Login") {
-<form class="form-horizontal" action='' method="POST">
-    <fieldset>
-        <div id="legend">
-            <legend class="">Login</legend>
-        </div>
-        <div class="control-group">
-            <!-- E-mail -->
-            <label class="control-label" for="email">E-mail</label>
-            <div class="controls">
-                <input type="text" id="email" name="email" placeholder="" class="input-xlarge">
-                <p class="help-block">Please provide your E-mail</p>
-            </div>
-        </div>
+<form action='' method="POST" autocomplete="on" class="form-inline">
+    <div id="legend">
+        <legend class="">Login</legend>
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+        <input id="email" type="email" class="form-control" name="email" value="" placeholder="Email Address">
+    </div>
 
-        <div class="control-group">
-            <!-- Password-->
-            <label class="control-label" for="password">Password</label>
-            <div class="controls">
-                <input type="password" id="password" name="password" placeholder="" class="input-xlarge">
-                <p class="help-block">Password should be at least 4 characters</p>
-            </div>
-        </div>
+    <div class="input-group">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+        <input id="password" type="password" class="form-control" name="password" value="" placeholder="Password">
+    </div><br /><br />
+    <button class="btn btn-primary">Enter</button>
 
-        <div class="control-group">
-            <!-- Button -->
-            <div class="controls">
-                <button class="btn btn-success">Enter</button>
-                <button class="btn btn-danger" type="reset">Reset</button>
-            </div>
-        </div>
-
-
-    </fieldset>
 </form>
 
 }
