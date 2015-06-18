@@ -28,15 +28,21 @@ object Coordinate {
 
   def findAll(): List[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from coordinates").as(Coordinate.simpleCoordinates *)
+      SQL("SELECT * FROM coordinates").as(Coordinate.simpleCoordinates *)
     }
   }
 
   def findById(id: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from coordinates WHERE id = {id}").on('id -> id).as(Coordinate.simpleCoordinates.singleOpt)
+      SQL("SELECT * FROM coordinates WHERE id = {id}").on('id -> id).as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
+
+  def findByRand(): Option[Coordinate] = {
+  DB.withConnection { implicit connection =>
+    SQL("SELECT * FROM coordinates ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
+  }
+}
 
   def insertCoordinate(ra: String, dec: String): Int = {
     DB.withConnection( { implicit connection =>

@@ -78,6 +78,13 @@ object Coordinates extends Controller {
     }.getOrElse(NotFound)
   }
 
+
+  def getCoordinates() = Action {
+    Coordinate.findByRand().map { coordinate =>
+      Ok(Json.toJson(coordinate))
+    }.getOrElse(NotFound)
+  }
+
   /**
    * Parses a JSON object of Coordinates
    * @todo write explanation

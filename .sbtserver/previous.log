@@ -1,5 +1,5 @@
-New log file opened at Thu Jun 18 02:29:30 CEST 2015 by 24983@dAvEmac.local
-jvm 24983@dAvEmac.local
+New log file opened at Thu Jun 18 11:45:33 CEST 2015 by 73923@dAvEmac.local
+jvm 73923@dAvEmac.local
 jvm vmName=Java HotSpot(TM) 64-Bit Server VM vmVendor=Oracle Corporation vmVersion=25.5-b02
 jvm specName=Java Virtual Machine Specification specVendor=Oracle Corporation specVersion=1.8
 jvm arguments: [-Xms256m, -Xmx1024m, -XX:MetaspaceSize=64m, -XX:MaxMetaspaceSize=256m]
@@ -27,7 +27,7 @@ sorting: ns: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin, sbt.plugins.Jvm
   :: sorted deduced result: List(sbt.plugins.CorePlugin, sbt.plugins.IvyPlugin, sbt.plugins.JvmPlugin, sbt.plugins.JUnitXmlReportPlugin)
 [Loading] Done in /Users/dave/Sites/bsc_thesis/pplibdataanalyzer/project, returning: (pplibdataanalyzer-build)
 Loading project definition from /Users/dave/Sites/bsc_thesis/pplibdataanalyzer/project
-Running task... Cancel: sbt.TaskCancellationStrategy$Null$@3b5b363f, check cycles: false
+Running task... Cancel: sbt.TaskCancellationStrategy$Null$@ace428a, check cycles: false
 
 Initial source changes: 
 	removed:Set()
@@ -65,10 +65,137 @@ Set current project to PPLibDataAnalyzer (in build file:/Users/dave/Sites/bsc_th
 > iflast shell
 > server-send-ready-for-request
 > server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/compile:discoveredMainClasses
+Evaluating tasks: compile:discoveredMainClasses
+Running task... Cancel: sbt.server.ServerTaskCancellation@2961f561, check cycles: false
+
+Initial source changes: 
+	removed:Set()
+	added: Set()
+	modified: Set()
+Removed products: Set()
+External API changes: API Changes: Set()
+Modified binary dependencies: Set()
+Initial directly invalidated sources: Set()
+
+Sources indirectly invalidated by:
+	product: Set()
+	binary dep: Set()
+	external source: Set()
+All initially invalidated sources: Set()
+
+Total time: 1 s, completed 18.06.2015 11:45:38
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/compile:mainClass
+Evaluating tasks: compile:mainClass
+Running task... Cancel: sbt.server.ServerTaskCancellation@85bfdde, check cycles: false
+Total time: 0 s, completed 18.06.2015 11:45:38
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/compile:discoveredMainClasses
+Evaluating tasks: compile:discoveredMainClasses
+Running task... Cancel: sbt.server.ServerTaskCancellation@2a4e1462, check cycles: false
+
+Initial source changes: 
+	removed:Set()
+	added: Set()
+	modified: Set()
+Removed products: Set()
+External API changes: API Changes: Set()
+Modified binary dependencies: Set()
+Initial directly invalidated sources: Set()
+
+Sources indirectly invalidated by:
+	product: Set()
+	binary dep: Set()
+	external source: Set()
+All initially invalidated sources: Set()
+
+Total time: 0 s, completed 18.06.2015 11:45:38
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/compile:mainClass
+Evaluating tasks: compile:mainClass
+Running task... Cancel: sbt.server.ServerTaskCancellation@232954e7, check cycles: false
+Total time: 0 s, completed 18.06.2015 11:45:38
+> server-post-command-cleanup
+> server-handle-next-server-request
+> backgroundRun
+Evaluating tasks: compile:backgroundRun
+Running task... Cancel: sbt.server.ServerTaskCancellation@60d9d035, check cycles: false
+Total time: 0 s, completed 18.06.2015 11:46:05
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/*:playForkConfig
+Evaluating tasks: *:playForkConfig
+Running task... Cancel: sbt.server.ServerTaskCancellation@47bccbeb, check cycles: false
+Total time: 0 s, completed 18.06.2015 11:46:07
+> server-post-command-cleanup
+> server-handle-next-server-request
+> root/playForkNotifyStart http://localhost:9000
+Evaluating tasks: *:playForkNotifyStart
+Running task... Cancel: sbt.server.ServerTaskCancellation@727b19fc, check cycles: false
+Total time: 0 s, completed 18.06.2015 11:46:07
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/*:playForkReload
+Evaluating tasks: *:playForkReload
+Running task... Cancel: sbt.server.ServerTaskCancellation@772e6062, check cycles: false
+
+Initial source changes: 
+	removed:Set()
+	added: Set()
+	modified: Set()
+Removed products: Set()
+External API changes: API Changes: Set()
+Modified binary dependencies: Set()
+Initial directly invalidated sources: Set()
+
+Sources indirectly invalidated by:
+	product: Set()
+	binary dep: Set()
+	external source: Set()
+All initially invalidated sources: Set()
+
+Copy resource mappings: 
+	(/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/conf/application.conf,/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/target/scala-2.11/classes/application.conf)
+	(/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/conf/routes,/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/target/scala-2.11/classes/routes)
+Total time: 0 s, completed 18.06.2015 11:46:12
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/compile:mainClass
+Evaluating tasks: compile:mainClass
+Running task... Cancel: sbt.server.ServerTaskCancellation@1e7ebb44, check cycles: false
+Total time: 0 s, completed 18.06.2015 11:53:43
+> server-post-command-cleanup
+> server-handle-next-server-request
+> {file:/Users/dave/Sites/bsc_thesis/pplibdataanalyzer/}root/compile:discoveredMainClasses
+Evaluating tasks: compile:discoveredMainClasses
+Running task... Cancel: sbt.server.ServerTaskCancellation@556f85be, check cycles: false
+
+Initial source changes: 
+	removed:Set()
+	added: Set()
+	modified: Set()
+Removed products: Set()
+External API changes: API Changes: Set()
+Modified binary dependencies: Set()
+Initial directly invalidated sources: Set()
+
+Sources indirectly invalidated by:
+	product: Set()
+	binary dep: Set()
+	external source: Set()
+All initially invalidated sources: Set()
+
+Total time: 0 s, completed 18.06.2015 11:53:43
+> server-post-command-cleanup
+> server-handle-next-server-request
 Done executing sbt server engine, result Right(Exit(0))
 Closing listening server socket
 Waiting for socket thread
 Waiting for request processor thread
 Waiting for command engine result
 Returning control to sbt launcher with result Exit(0)
-Closing the 24983@dAvEmac.local logs at Thu Jun 18 02:29:35 CEST 2015, goodbye.
+Closing the 73923@dAvEmac.local logs at Thu Jun 18 11:53:46 CEST 2015, goodbye.
