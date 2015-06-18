@@ -33,6 +33,30 @@ object Users extends Controller {
     Ok(Json.toJson(userEmails))
   }
 
+
+  implicit val login = (
+    (__ \ 'email).read[String] and
+      (__ \ 'password).read[String]
+    ) tupled
+
+
+  /**
+   * Submit of the login tuple for the admin services
+   *
+   * @return void
+   */
+  def getUuid() = Action { request =>
+    request.body.asJson.map { json =>
+      json.validate[(String, String)].map{
+        case (email, password) => Ok(User.getUuid(email, password))
+      }.recoverTotal{
+        e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
+      }
+    }.getOrElse {
+      BadRequest("Expecting Json data")
+    }
+  }
+
   /**
    * Inserts an User
    *
@@ -43,7 +67,7 @@ object Users extends Controller {
       userForm.bindFromRequest().fold(
       formWithErrors => BadRequest(views.html.userlist.render(User.findAll(), flash)),
       tempUser => {
-        val id = User.insertUser(tempUser.email, tempUser.lastname, tempUser.lastname, tempUser.roleId, tempUser.password)
+        val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, tempUser.roleId, tempUser.password)
         val flash = play.api.mvc.Flash(Map(
           "success" -> "User was succesfully inserted"
         ))

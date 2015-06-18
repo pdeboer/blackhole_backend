@@ -25,7 +25,6 @@ object Tasklogs extends Controller {
    */
   implicit object tasklogWrites extends Writes[Tasklog] {
     def writes(t: Tasklog) = Json.obj(
-      "id" -> Json.toJson(t.id),
       "uuid" -> Json.toJson(t.uuid),
       "question" -> Json.toJson(t.question),
       "answer" -> Json.toJson(t.answer)
@@ -38,8 +37,8 @@ object Tasklogs extends Controller {
    * @param id
    * @return
    */
-  def details(id: Int) = Action {
-    Tasklog.findById(id).map { tasklog =>
+  def details(uuid: Int) = Action {
+    Tasklog.findById(uuid).map { tasklog =>
       Ok(Json.toJson(tasklog))
     }.getOrElse(NotFound)
   }
@@ -48,7 +47,6 @@ object Tasklogs extends Controller {
    * Parses the json object
    */
   implicit val tasklogReads: Reads[Tasklog] = (
-    (JsPath \ "id").read[Int] and
       (JsPath \ "uuid").read[String] and
       (JsPath \ "question").read[String] and
       (JsPath \ "answer").read[String]
@@ -60,8 +58,8 @@ object Tasklogs extends Controller {
     try {
       val tasklogJson = request.body
       val log = tasklogJson.as[Tasklog] //@todo set id as optional
-      Tasklog.insertTasklog(log.uuid, log.question, log.answer)
-      Ok("Saved")
+      val id = Tasklog.insertTasklog(log.uuid, log.question, log.answer)
+      Ok(id.get.toString())
     }
     catch {
       case e:IllegalArgumentException => BadRequest("Log file does not exist")

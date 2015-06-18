@@ -11,12 +11,11 @@ import anorm.SqlParser._
 /**
  * An entry in the Tasklog list
  *
- * @param id Tasklog id
  * @param uuid Tasklog uuid
  * @param question Tasklog question
  * @param answer Tasklog answer
  */
-case class Tasklog(id: Int, uuid: String, question: String, answer: String)
+case class Tasklog(uuid: String, question: String, answer: String)
 
 object Tasklog {
 
@@ -26,26 +25,28 @@ object Tasklog {
     }
   }
 
-  def findById(id: Int): Option[Tasklog] = {
+  def findById(uuid: Int): Option[Tasklog] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from tasklog WHERE id = {id}").on('id -> id).as(Tasklog.simpleTasklog.singleOpt)
+      SQL("select * from tasklog WHERE uuid = {uuid}").on('uuid -> uuid).as(Tasklog.simpleTasklog.singleOpt)
     }
   }
 
   def insertTasklog(uuid: String, question: String, answer: String): Option[Long] = {
-    DB.withConnection { implicit connection =>
+    val id: Option[Long] = DB.withConnection { implicit connection =>
       SQL("INSERT INTO tasklog(`uuid`, `question`, `answer`) VALUES ({uuid}, {question}, {answer})")
-        .on('uuid -> uuid, 'question -> question, 'answer -> answer)
+        .on('uuid -> uuid)
+        .on('question -> question)
+        .on('answer -> answer)
         .executeInsert()
     }
+    id
   }
 
   val simpleTasklog = {
-    get[Int]("id")~
-      get[String]("uuid") ~
+      get[String]("uuid") ~ // get[Option[Int]]
       get[String]("question") ~
       get[String]("answer") map {
-      case id~uuid~question~answer => Tasklog(id, uuid, question, answer)
+      case uuid~question~answer => Tasklog(uuid, question, answer)
     }
   }
 

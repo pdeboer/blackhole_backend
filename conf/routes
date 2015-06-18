@@ -34,6 +34,7 @@ GET /tasks/detailsHtml:id                   controllers.Tasks.detailsHtml(id: In
 GET /tasks/getNext/:id                   controllers.Tasks.getNext(id: Int)
 
 #Users
+POST        /users/getUuid               controllers.Users.getUuid
 GET /users                          controllers.Users.list
 GET /users/:email                   controllers.Users.details(email: String)
 #PUT /users/:email                   controllers.Users.save(email: String)

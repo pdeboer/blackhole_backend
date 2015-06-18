@@ -28,24 +28,37 @@ object User {
 
   def findAll(): List[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from users").as(User.simpleUser *)
+      SQL("SELECT * FROM users").as(User.simpleUser *)
     }
   }
 
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from users WHERE email = {email}").on('email -> email).as(User.simpleUser.singleOpt)
+      SQL("SELECT * FROM users WHERE email = {email}").on('email -> email).as(User.simpleUser.singleOpt)
     }
   }
 
   def findByEmailAndPassword(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from users WHERE email = {email} AND password = {password} AND active = 1")
+      SQL("SELECT * FROM users WHERE email = {email} AND password = {password} AND active = 1")
         .on('email -> email)
         .on('password -> password)
         .as(User.simpleUser.singleOpt)
     }
   }
+
+  def getUuid(email: String, password: String): String = {
+    DB.withConnection { implicit connection =>
+     val rowOption = SQL("SELECT uuid as uuid FROM users WHERE email = {email} AND password = {password} AND active = 1 LIMIT 1")
+        .on('email -> email)
+        .on('password -> password)
+        .apply
+        .headOption
+        rowOption.map(row => row[String]("uuid")).getOrElse("")
+    }
+  }
+
+
 
   val simpleUser = {
       get[String]("email") ~

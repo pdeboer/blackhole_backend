@@ -2,7 +2,17 @@
 
 @main("Coordinates") {
 <h3>List of Coordinates:</h3>
-<table class="table table-striped">
+<table id="coordtable" class="table table-striped">
+    <thead>
+        <tr>
+        <th>Id</th>
+        <th>ra</th>
+        <th>dec</th>
+        <th>active</th>
+        <th>delete?</th>
+        </tr>
+    </thead>
+    <tfoot>
     <tr>
         <th>Id</th>
         <th>ra</th>
@@ -10,6 +20,9 @@
         <th>active</th>
         <th>delete?</th>
     </tr>
+    </tfoot>
+
+    <tbody>
     @for(coordinate <- coordinates) {
     <tr>
         <td>@coordinate.id</td>
@@ -18,19 +31,39 @@
         <td>@if(coordinate.active == 1) { <span style="color:green;" class="glyphicon glyphicon-ok"></span> } else {<span style="color:red;" class="glyphicon glyphicon-remove"></span>}</td>
         <td><a href="/deletecoordinate/@coordinate.id"><span style="color:red;" class="glyphicon glyphicon-remove"></span></a></tr>
     }
+    </tbody>
 </table><br /><br />
 
-<h3>Create New Coordinate-Pair:</h3>
-<form method="post" autocomplete="on" action="insertcoordinate" class="form-inline">
-    <div class="form-group">
-        <label for="ra">ra:</label>
-        <input type="text" class="form-control" id="ra" placeholder="1111.1111" name="ra">
-    </div>
-    <div class="form-group">
-        <label for="dec">dec:</label>
-        <input type="text" class="form-control" id="dec" placeholder="1111.1111" name="dec">
-    </div>
-    <button type="submit" class="btn btn-default">Submit</button>
-</form>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Create New Coordinate-Pair</button>
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" autocomplete="on" action="/insertcoordinate" class="form-inline">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Create New Coordinate-Pair:</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="ra">ra:</label>
+                        <input type="text" class="form-control" id="ra" placeholder="1111.1111" name="ra">
+                    </div>
+                    <div class="form-group">
+                        <label for="dec">dec:</label>
+                        <input type="text" class="form-control" id="dec" placeholder="1111.1111" name="dec">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+</div>
 }
