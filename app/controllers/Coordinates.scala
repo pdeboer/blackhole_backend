@@ -3,6 +3,7 @@ package controllers
 import models.Coordinate
 import play.api.Logger
 import play.api.data._
+import play.api.cache._
 import play.api.data.Forms._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -13,10 +14,13 @@ object Coordinates extends Controller {
 
   // Coordinates Form
   val coordinatesForm = Form(
-    tuple(
-      "ra" -> nonEmptyText,
-      "dec" -> nonEmptyText
-    )
+    mapping(
+      "id" -> optional(number),
+      "sdss_id" -> number,
+      "ra" -> bigDecimal,
+      "dec" -> bigDecimal,
+      "active" -> number
+    )(Coordinate.apply)(Coordinate.unapply)
   )
 
   /**
@@ -25,10 +29,17 @@ object Coordinates extends Controller {
    * @return void
    */
   def insertCoordinate = Action { implicit request =>
-    val (ra, dec) = coordinatesForm.bindFromRequest.get
-    val Id = Coordinate.insertCoordinate(ra, dec)
-    Ok(views.html.coordinatelist.render(Coordinate.findAll()))
-  }
+    val flash = play.api.mvc.Flash(Map("error" -> "Coordinates were not inserted"))
+    coordinatesForm.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.coordinatelist.render(Coordinate.findAll(1000, 0), flash)),
+      tempCoordinates => {
+        val Id = Coordinate.insertCoordinate(tempCoordinates.sdss_id, tempCoordinates.ra, tempCoordinates.dec)
+        val flash = play.api.mvc.Flash(Map(
+          "success" -> "User was succesfully inserted"
+        ))
+        Ok(views.html.coordinatelist.render(Coordinate.findAll(1000, 0), flash))
+      })
+    }
 
 
   /**
@@ -39,7 +50,10 @@ object Coordinates extends Controller {
    */
   def deleteCoordinate(Id: Int) = Action { implicit request =>
     val result = Coordinate.deleteCoordinate(Id)
-    Ok(views.html.coordinatelist.render(Coordinate.findAll()))
+    val flash = play.api.mvc.Flash(Map(
+      "success" -> "Coordinates successfully deleted"
+    ))
+    Ok(views.html.coordinatelist.render(Coordinate.findAll(1000, 0), flash))
   }
 
   // Json part
@@ -50,8 +64,8 @@ object Coordinates extends Controller {
    * @return void
    */
   def list = Action {
-    val allCoordinates = Coordinate.findAll.map(_.id)
-    Ok(Json.toJson(allCoordinates))
+      val allCoordinates = Coordinate.findAll(99999, 0).map(_.id)
+      Ok(Json.toJson(allCoordinates))
   }
 
   /**
@@ -61,6 +75,7 @@ object Coordinates extends Controller {
   implicit object CoordinateWrites extends Writes[Coordinate] {
     def writes(c: Coordinate) = Json.obj(
       "id" -> Json.toJson(c.id),
+      "sdss_id" -> Json.toJson(c.id),
       "ra" -> Json.toJson(c.ra),
       "dec" -> Json.toJson(c.dec),
       "active" -> Json.toJson(c.active)
@@ -78,21 +93,25 @@ object Coordinates extends Controller {
     }.getOrElse(NotFound)
   }
 
-
+  /**
+   * Get coordinates
+   *
+   * @return
+   */
   def getCoordinates() = Action {
-    Coordinate.findByRand().map { coordinate =>
-      Ok(Json.toJson(coordinate))
-    }.getOrElse(NotFound)
+      Coordinate.findByRand().map { coordinate =>
+        Ok(Json.toJson(coordinate))
+      }.getOrElse(NotFound)
   }
 
   /**
    * Parses a JSON object of Coordinates
-   * @todo write explanation
    */
   implicit val userReads: Reads[Coordinate] = (
-    (JsPath \ "id").read[Int] and
-      (JsPath \ "ra").read[String] and
-      (JsPath \ "dec").read[String] and
+    (JsPath \ "id").read[Option[Int]] and
+      (JsPath \ "sdss_id").read[Int] and
+      (JsPath \ "ra").read[BigDecimal] and
+      (JsPath \ "dec").read[BigDecimal] and
       (JsPath \ "active").read[Int]
     )(Coordinate.apply _)
 

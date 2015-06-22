@@ -59,6 +59,12 @@ object Tasks extends Controller {
     }.getOrElse(NotFound)
   }
 
+  /**
+   * Details Html
+   *
+   * @param id
+   * @return
+   */
   def detailsHtml(id: Int) = Action {
     Task.findById(id).map { task =>
       Ok(Json.toJson(task))

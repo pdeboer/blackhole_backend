@@ -27,7 +27,9 @@ case class Task(id: Int, task: String, taskType: String, value: Int, formerTaskI
 object Task {
 
   /**
-   * Products sorted by EAN code.
+   * Find all Tasks
+   *
+   * @return
    */
   def findAll(): List[Task] = {
     DB.withConnection { implicit connection =>
@@ -35,12 +37,21 @@ object Task {
     }
   }
 
+  /**
+   * Find Task by Id
+   *
+   * @param id
+   * @return
+   */
   def findById(id: Int): Option[Task] = {
     DB.withConnection { implicit connection =>
       SQL("select * from tasks WHERE id = {id}").on('id -> id).as(Task.simpleTask.singleOpt)
     }
   }
 
+  /**
+   * Task structure
+   */
   val simpleTask = {
     get[Int]("id")~
     get[String]("task") ~

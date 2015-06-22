@@ -26,8 +26,10 @@ object Tasklogs extends Controller {
   implicit object tasklogWrites extends Writes[Tasklog] {
     def writes(t: Tasklog) = Json.obj(
       "uuid" -> Json.toJson(t.uuid),
-      "question" -> Json.toJson(t.question),
-      "answer" -> Json.toJson(t.answer)
+      "coordinates_id" -> Json.toJson(t.coordinates_id),
+      "question_id" -> Json.toJson(t.question_id),
+      "answer" -> Json.toJson(t.answer),
+      "ip" -> Json.toJson(t.ip)
     )
   }
 
@@ -48,8 +50,10 @@ object Tasklogs extends Controller {
    */
   implicit val tasklogReads: Reads[Tasklog] = (
       (JsPath \ "uuid").read[String] and
-      (JsPath \ "question").read[String] and
-      (JsPath \ "answer").read[String]
+        (JsPath \ "coordinates_id").read[Int] and
+      (JsPath \ "question_id").read[Int] and
+      (JsPath \ "answer").read[String] and
+        (JsPath \ "ip").read[String]
     )(Tasklog.apply _)
 
 
@@ -58,7 +62,7 @@ object Tasklogs extends Controller {
     try {
       val tasklogJson = request.body
       val log = tasklogJson.as[Tasklog] //@todo set id as optional
-      val id = Tasklog.insertTasklog(log.uuid, log.question, log.answer)
+      val id = Tasklog.insertTasklog(log.uuid, log.coordinates_id, log.question_id, log.answer, log.ip)
       Ok(id.get.toString())
     }
     catch {

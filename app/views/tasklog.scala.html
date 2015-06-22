@@ -6,23 +6,29 @@
     <thead>
     <tr>
         <th>user uuid</th>
+        <th>coordinates id</th>
         <th>question id</th>
         <th>answer given</th>
+        <th>ip</th>
     </tr>
     </thead>
     <tfoot>
     <tr>
         <th>user uuid</th>
+        <th>coordinates id</th>
         <th>question id</th>
         <th>answer given</th>
+        <th>ip</th>
     </tr>
     </tfoot>
     <tbody>
     @for(log <- tasklogs) {
     <tr>
         <td>@log.uuid</td>
-        <td>@log.question</td>
+        <td>@log.coordinates_id</td>
+        <td>@log.question_id</td>
         <td>@log.answer</td>
+        <td>@log.ip</td>
     </tr>
     }
 </tbody>

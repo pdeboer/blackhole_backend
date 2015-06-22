@@ -34,6 +34,9 @@ object Users extends Controller {
   }
 
 
+  /**
+   * Login Tuple
+   */
   implicit val login = (
     (__ \ 'email).read[String] and
       (__ \ 'password).read[String]

@@ -26,18 +26,36 @@ case class User(email: String, firstname: String, lastname: String, roleId: Int,
  */
 object User {
 
+  /**
+   * Find all Users
+   *
+   * @return
+   */
   def findAll(): List[User] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT * FROM users").as(User.simpleUser *)
     }
   }
 
+  /**
+   * Find all Users by email
+   *
+   * @param email
+   * @return
+   */
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT * FROM users WHERE email = {email}").on('email -> email).as(User.simpleUser.singleOpt)
     }
   }
 
+  /**
+   * Find all Users by email and password
+   *
+   * @param email
+   * @param password
+   * @return
+   */
   def findByEmailAndPassword(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT * FROM users WHERE email = {email} AND password = {password} AND active = 1")
@@ -47,6 +65,13 @@ object User {
     }
   }
 
+  /**
+   * Get the uuid by email and password
+   *
+   * @param email
+   * @param password
+   * @return
+   */
   def getUuid(email: String, password: String): String = {
     DB.withConnection { implicit connection =>
      val rowOption = SQL("SELECT uuid as uuid FROM users WHERE email = {email} AND password = {password} AND active = 1 LIMIT 1")
@@ -58,20 +83,16 @@ object User {
     }
   }
 
-
-
-  val simpleUser = {
-      get[String]("email") ~
-      get[String]("firstname") ~
-      get[String]("lastname") ~
-        get[Int]("roleId") ~
-        get[Int]("active") ~
-      get[String]("password")~
-        get[String]("uuid") map {
-      case email~firstname~lastname~roleId~active~password~uuid => User(email, firstname, lastname, roleId, active, password, uuid)
-    }
-  }
-
+  /**
+   * Insert an User
+   *
+   * @param email
+   * @param lastname
+   * @param firstname
+   * @param roleId
+   * @param password
+   * @return
+   */
   def insertUser(email: String, lastname: String, firstname: String, roleId: Int, password: String): Int = {
     val uuid = java.util.UUID.randomUUID.toString //@ToDo test for double random uuids
     DB.withConnection( { implicit connection =>
@@ -80,6 +101,12 @@ object User {
     1
   }
 
+  /**
+   * Delete an User
+   *
+   * @param email
+   * @return
+   */
   def deleteUser(email: String): Int = {
     DB.withConnection( { implicit connection =>
       val result = SQL("DELETE FROM users WHERE `email` = {email}").on('email -> email).executeUpdate()
@@ -87,6 +114,12 @@ object User {
     1
   }
 
+  /**
+   * Change the active state of an user
+   *
+   * @param email
+   * @return
+   */
   def changeActiveUser(email: String): Int = {
     DB.withConnection( { implicit connection =>
       val checkState = SQL("SELECT active as active FROM users WHERE `email` = {email}").on('email -> email).apply().head
@@ -102,5 +135,21 @@ object User {
     })
     1
   }
+
+  /**
+   * Struct of User
+   */
+  val simpleUser = {
+      get[String]("email") ~
+      get[String]("firstname") ~
+      get[String]("lastname") ~
+        get[Int]("roleId") ~
+        get[Int]("active") ~
+      get[String]("password")~
+        get[String]("uuid") map {
+      case email~firstname~lastname~roleId~active~password~uuid => User(email, firstname, lastname, roleId, active, password, uuid)
+    }
+  }
+
 
 }

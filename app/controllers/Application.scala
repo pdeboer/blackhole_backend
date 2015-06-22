@@ -89,8 +89,11 @@ object Application extends Controller {
    *
    * @return void
    */
-  def coordinatelist = AuthAction {
-    Ok(views.html.coordinatelist.render(Coordinate.findAll()))
+  def coordinatelist(limit: Int, offset: Int) = AuthAction {
+    val flash = play.api.mvc.Flash(Map(
+
+    ))
+    Ok(views.html.coordinatelist.render(Coordinate.findAll(limit, offset), flash))
   }
 
   /**
