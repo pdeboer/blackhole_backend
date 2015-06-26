@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 26. Jun 2015 um 03:58
+-- Erstellungszeit: 26. Jun 2015 um 04:21
 -- Server-Version: 5.6.24
 -- PHP-Version: 5.5.20
 
@@ -48665,7 +48665,7 @@ CREATE TABLE IF NOT EXISTS `coordinatesToSet` (
 CREATE TABLE IF NOT EXISTS `notifications` (
   `id` int(11) unsigned NOT NULL,
   `text` varchar(255) NOT NULL,
-  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
@@ -48673,7 +48673,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 --
 
 INSERT INTO `notifications` (`id`, `text`, `timestamp`) VALUES
-(1, 'Test notification nr 1', '2015-06-18 00:25:41');
+(1, 'Test notification nr 1', '2015-06-17 22:25:41');
 
 -- --------------------------------------------------------
 
@@ -48719,7 +48719,7 @@ CREATE TABLE IF NOT EXISTS `tasklog` (
   `question_id` int(11) unsigned DEFAULT NULL,
   `answer` varchar(45) DEFAULT NULL,
   `ip` varchar(45) DEFAULT NULL,
-  `timestamp` datetime DEFAULT CURRENT_TIMESTAMP
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 
 --
@@ -48727,7 +48727,7 @@ CREATE TABLE IF NOT EXISTS `tasklog` (
 --
 
 INSERT INTO `tasklog` (`id`, `uuid`, `coordinates_id`, `question_id`, `answer`, `ip`, `timestamp`) VALUES
-(48, 'f4957a2c-921d-4cd0-9634-a9da89c9c3ef', 1, 1, 'yes', '77.57.13.24', '2015-06-22 05:02:38');
+(48, 'f4957a2c-921d-4cd0-9634-a9da89c9c3ef', 1, 1, 'yes', '77.57.13.24', '2015-06-26 03:02:38');
 
 -- --------------------------------------------------------
 
