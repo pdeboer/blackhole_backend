@@ -59,9 +59,9 @@ object Coordinates extends Controller {
       13 -> 0.015)
 
     val coords = Coordinate.findAll(Coordinate.countCoordinates(), 0)
-
-    coords.foreach {coord =>
-      zoomLevel.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + postfixUrl, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
+    // not done by par because of server-spamming
+    coords.par.foreach {coord =>
+      zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + postfixUrl, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
     }
     true
   }
