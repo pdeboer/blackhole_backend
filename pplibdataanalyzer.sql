@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 26. Jun 2015 um 04:21
+-- Erstellungszeit: 26. Jun 2015 um 04:29
 -- Server-Version: 5.6.24
 -- PHP-Version: 5.5.20
 
@@ -48665,7 +48665,7 @@ CREATE TABLE IF NOT EXISTS `coordinatesToSet` (
 CREATE TABLE IF NOT EXISTS `notifications` (
   `id` int(11) unsigned NOT NULL,
   `text` varchar(255) NOT NULL,
-  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
@@ -48719,7 +48719,7 @@ CREATE TABLE IF NOT EXISTS `tasklog` (
   `question_id` int(11) unsigned DEFAULT NULL,
   `answer` varchar(45) DEFAULT NULL,
   `ip` varchar(45) DEFAULT NULL,
-  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
 
 --
