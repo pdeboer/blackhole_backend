@@ -15,6 +15,7 @@
     <thead>
         <tr>
         <th>Id</th>
+            <th>Sdss Id</th>
         <th>ra</th>
         <th>dec</th>
         <th>active</th>
@@ -24,6 +25,7 @@
     <tfoot>
     <tr>
         <th>Id</th>
+        <th>Sdss Id</th>
         <th>ra</th>
         <th>dec</th>
         <th>active</th>
@@ -35,6 +37,7 @@
     @for(coordinate <- coordinates) {
     <tr>
         <td>@coordinate.id</td>
+        <td>@coordinate.sdss_id</td>
         <td>@coordinate.ra</td>
         <td>@coordinate.dec</td>
         <td>@if(coordinate.active == 1) { <span style="color:green;" class="glyphicon glyphicon-ok"></span> } else {<span style="color:red;" class="glyphicon glyphicon-remove"></span>}</td>

@@ -58,7 +58,7 @@ object Coordinates extends Controller {
       12 -> 0.0247579375,
       13 -> 0.015)
 
-    val coords = Coordinate.findAll(3, 0)
+    val coords = Coordinate.findAll(Coordinate.countCoordinates(), 0)
 
     coords.foreach {coord =>
       zoomLevel.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + postfixUrl, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
@@ -71,7 +71,7 @@ object Coordinates extends Controller {
   val coordinatesForm = Form(
     mapping(
       "id" -> optional(number),
-      "sdss_id" -> number,
+      "sdss_id" -> bigDecimal,
       "ra" -> bigDecimal,
       "dec" -> bigDecimal,
       "active" -> number
@@ -119,7 +119,7 @@ object Coordinates extends Controller {
    * @return void
    */
   def list = Action {
-      val allCoordinates = Coordinate.findAll(99999, 0).map(_.id)
+      val allCoordinates = Coordinate.findAll(Coordinate.countCoordinates(), 0).map(_.id)
       Ok(Json.toJson(allCoordinates))
   }
 
@@ -164,7 +164,7 @@ object Coordinates extends Controller {
    */
   implicit val userReads: Reads[Coordinate] = (
     (JsPath \ "id").read[Option[Int]] and
-      (JsPath \ "sdss_id").read[Int] and
+      (JsPath \ "sdss_id").read[BigDecimal] and
       (JsPath \ "ra").read[BigDecimal] and
       (JsPath \ "dec").read[BigDecimal] and
       (JsPath \ "active").read[Int]

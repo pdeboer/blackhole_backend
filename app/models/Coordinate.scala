@@ -23,7 +23,7 @@ import scala.text
 * @param dec Coordinates dec
 * @param active Coordinates active
 */
-case class Coordinate(id: Option[Int], sdss_id: Int, ra: BigDecimal, dec: BigDecimal, active: Int)
+case class Coordinate(id: Option[Int], sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal, active: Int)
 
 object Coordinate {
 
@@ -64,6 +64,23 @@ object Coordinate {
 }
 
   /**
+   * Count Coordinates
+   *
+   * @return
+   */
+  def countCoordinates(): Int = {
+    DB.withConnection { implicit connection =>
+      val rowOption = SQL("SELECT COUNT(*) as count FROM coordinates")
+        .apply
+        .headOption
+      rowOption.map(row => row[Int]("count")).getOrElse(0)
+    }
+
+  }
+
+
+
+  /**
    * Insert Coordinates
    *
    * @param sdss_id
@@ -71,7 +88,7 @@ object Coordinate {
    * @param dec
    * @return
    */
-  def insertCoordinate(sdss_id: Int, ra: BigDecimal, dec: BigDecimal): Int = {
+  def insertCoordinate(sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal): Int = {
     DB.withConnection( { implicit connection =>
       SQL("INSERT INTO coordinates(`sdss_id`, `ra`, `dec`, `active`) VALUES ({sdss_id}, {ra}, {dec}, {active})").on('sdss_id -> sdss_id, 'ra -> ra, 'dec -> dec, 'active -> '1').executeInsert()
     })
@@ -96,7 +113,7 @@ object Coordinate {
    */
   val simpleCoordinates = {
     get[Option[Int]]("id")~
-      get[Int]("sdss_id")~
+      get[BigDecimal]("sdss_id")~
       get[BigDecimal]("ra") ~
       get[BigDecimal]("dec") ~
       get[Int]("active") map {
