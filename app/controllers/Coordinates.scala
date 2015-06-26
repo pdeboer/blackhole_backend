@@ -7,10 +7,65 @@ import play.api.cache._
 import play.api.data.Forms._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import play.api.Logger
+
+import sys.process._
+import java.net.URL
+import java.io.File
 import play.api.mvc.{Controller, _}
 
 
 object Coordinates extends Controller {
+
+
+  /**
+   * File downloader
+   *
+   * @param url
+   * @param filename
+   * @return
+   */
+  def fileDownloader(url: String, filename: String) = {
+
+    // Check if its downloaded already
+    val tmpFile = new File(filename).exists
+    if(!tmpFile) {
+      // write file
+      new URL(url) #> new File(filename) !!
+    }
+  }
+
+  /**
+   * Download sdss files
+   *
+   * @return
+   */
+  def downloadFile(): Boolean = {
+    val baseUrl = "http://skyservice.pha.jhu.edu/DR7/ImgCutout/getjpeg.aspx?"
+    val postfixUrl = "&opt=&width=2000&height=2000"
+    val zoomLevel = Map(
+      1 -> 50.704256,
+      2 -> 25.352128,
+      3 -> 12.676064,
+      4 -> 6.338032,
+      5 -> 3.169016,
+      6 -> 1.584508,
+      7 -> 0.792254,
+      8 -> 0.396127,
+      9 -> 0.1980635,
+      10 -> 0.09903175,
+      11 -> 0.049515875,
+      12 -> 0.0247579375,
+      13 -> 0.015)
+
+    val coords = Coordinate.findAll(3, 0)
+
+    coords.foreach {coord =>
+      zoomLevel.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + postfixUrl, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
+    }
+    true
+  }
+
 
   // Coordinates Form
   val coordinatesForm = Form(

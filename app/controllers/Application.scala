@@ -89,11 +89,19 @@ object Application extends Controller {
    *
    * @return void
    */
-  def coordinatelist(limit: Int, offset: Int) = AuthAction {
+  def coordinatelist(limit: Int, offest: Int) = AuthAction {
     val flash = play.api.mvc.Flash(Map(
 
     ))
-    Ok(views.html.coordinatelist.render(Coordinate.findAll(limit, offset), flash))
+    Ok(views.html.coordinatelist.render(Coordinate.findAll(9999, 0), flash))
+  }
+
+  def showjwt = AuthAction {
+    val jwtoken = User.getJWT("david.pinezich@gmail.com", "test");
+    val jwTokenDecode = User.decodeJWT(jwtoken)
+
+    Coordinates.downloadFile()
+    Ok(html.showjwt.render(jwtoken, jwTokenDecode))
   }
 
   /**

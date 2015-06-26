@@ -8,6 +8,9 @@ import play.api.Logger
 
 import anorm._
 import anorm.SqlParser._
+
+import io.really.jwt._
+import play.api.libs.json.Json
 /**
  * An entry in the product catalogue.
  *
@@ -25,6 +28,8 @@ case class User(email: String, firstname: String, lastname: String, roleId: Int,
  * Products data access
  */
 object User {
+
+  val secret = "pplibdatanalyzerSec2015"
 
   /**
    * Find all Users
@@ -82,6 +87,33 @@ object User {
         rowOption.map(row => row[String]("uuid")).getOrElse("")
     }
   }
+
+  /**
+   * Get the JW Token
+   *
+   * @param email
+   * @param password
+   * @return
+   */
+  def getJWT(email: String, password: String): String = {
+    // @ToDo do timestamp automatic + 1month
+    val payload = Json.obj("email" -> email, "password" -> password, "data" -> 1466899053)
+    val jwToken = JWT.encode(secret, payload)
+    jwToken
+  }
+
+  /**
+   * Decode the token
+   *
+   * @param token
+   */
+  def decodeJWT(token: String): io.really.jwt.JWTResult = {
+    val jwTokenDecoded = JWT.decode(token, Some(secret))
+    jwTokenDecoded
+  }
+
+
+
 
   /**
    * Insert an User

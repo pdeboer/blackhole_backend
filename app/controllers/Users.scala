@@ -6,6 +6,10 @@ import play.api.data._
 import play.api.data.Forms._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+
+import io.really.jwt._
+import play.api.libs.json.Json
+
 import play.api.mvc.{Controller, _}
 
 object Users extends Controller {
@@ -58,6 +62,24 @@ object Users extends Controller {
     }.getOrElse {
       BadRequest("Expecting Json data")
     }
+  }
+
+  /**
+   * Submit the login tuple to get a jwt token
+   *
+   * @return void
+   */
+  def getJWT() = Action { request =>
+    request.body.asJson.map { json =>
+      json.validate[(String, String)].map{
+        case (email, password) => Ok(User.getJWT(email, password))
+      }.recoverTotal {
+        e => BadRequest("Error"+ JsError.toFlatJson(e))
+      }
+    }.getOrElse {
+      BadRequest("Expecting Json Data")
+    }
+
   }
 
   /**

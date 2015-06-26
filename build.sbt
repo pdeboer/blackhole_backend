@@ -7,6 +7,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
+  "io.really" %% "jwt-scala" % "1.2.2",
   jdbc,
   anorm,
   cache,

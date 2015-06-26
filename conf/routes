@@ -4,14 +4,14 @@
 
 # Home page
 GET         /                     controllers.Application.login
+
 POST        /               controllers.Application.submitlogin
 #GET     /                           controllers.Application.index
 
 
 GET /taskloglist               controllers.Application.taskloglist
-
 GET /tasklist                  controllers.Application.tasklist
-
+GET         /showjwt                     controllers.Application.showjwt
 
 #Coordinatelist
 GET /coordinatelist/:limit/:offset            controllers.Application.coordinatelist(limit: Int, offset: Int)
@@ -36,6 +36,7 @@ GET /tasks/getNext/:id                   controllers.Tasks.getNext(id: Int)
 
 #Users
 POST        /users/getUuid               controllers.Users.getUuid
+POST        /users/getJWT              controllers.Users.getJWT
 GET /users                          controllers.Users.list
 GET /users/:email                   controllers.Users.details(email: String)
 #PUT /users/:email                   controllers.Users.save(email: String)

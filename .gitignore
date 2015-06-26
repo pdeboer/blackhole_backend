@@ -18,3 +18,16 @@ dist
 /activator-sbt-atmos-akka-shim.sbt
 *.log
 project/.sbtserver
+public/images/sdss/1/*
+public/images/sdss/2/*
+public/images/sdss/3/*
+public/images/sdss/4/*
+public/images/sdss/5/*
+public/images/sdss/6/*
+public/images/sdss/7/*
+public/images/sdss/8/*
+public/images/sdss/9/*
+public/images/sdss/10/*
+public/images/sdss/11/*
+public/images/sdss/12/*
+public/images/sdss/13/*

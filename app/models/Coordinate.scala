@@ -36,7 +36,7 @@ object Coordinate {
    */
   def findAll(limit: Int, offset: Int): List[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * FROM coordinates LIMIT {limit} OFFSET {offset}").on('limit -> limit, 'offset -> offset).as(Coordinate.simpleCoordinates *)
+      SQL("SELECT `Id`, `sdss_id`, `ra`, `dec`, `active` FROM coordinates LIMIT {limit} OFFSET {offset}").on('limit -> limit, 'offset -> offset).as(Coordinate.simpleCoordinates *)
     }
   }
 
