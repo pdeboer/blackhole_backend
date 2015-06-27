@@ -1,4 +1,5 @@
-@(coordinates: List[Coordinate])(implicit flash: Flash)
+@import play.api.Play.current
+ @(coordinates: List[Coordinate])(implicit flash: Flash)
 
 @flash.get("error").map { errorMessage =>
 <div class="alert alert-danger" role="alert">
@@ -11,6 +12,7 @@
 @main("Coordinates") {
 <h3>List of Coordinates:</h3>
 
+@play.api.cache.Cache.getOrElse("key", 24*3600) {
 <table id="coordtable" class="table table-striped">
     <thead>
         <tr>
@@ -45,7 +47,7 @@
     }
     </tbody>
 </table><br /><br />
-
+}
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">Create New Coordinate-Pair</button>
 

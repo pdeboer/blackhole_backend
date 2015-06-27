@@ -34,10 +34,14 @@ object Coordinate {
    * @param offset
    * @return
    */
-  def findAll(limit: Int, offset: Int): List[Coordinate] = {
+  def findSome(limit: Int = Coordinate.countCoordinates(), offset: Int = 0): List[Coordinate] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT `Id`, `sdss_id`, `ra`, `dec`, `active` FROM coordinates LIMIT {limit} OFFSET {offset}").on('limit -> limit, 'offset -> offset).as(Coordinate.simpleCoordinates *)
     }
+  }
+
+  def findAll() : List[Coordinate] = {
+    findSome()
   }
 
   /**

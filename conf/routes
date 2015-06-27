@@ -14,7 +14,9 @@ GET /tasklist                  controllers.Application.tasklist
 GET         /showjwt                     controllers.Application.showjwt
 
 #Coordinatelist
-GET /coordinatelist/:limit/:offset            controllers.Application.coordinatelist(limit: Int, offset: Int)
+GET /coordinatelist/full           controllers.Application.fullcoordinatelist
+
+GET /coordinatelist/:limit/:offset            controllers.Application.somecoordinatelist(limit: Int, offset: Int)
 GET /coordinates      controllers.Coordinates.getCoordinates
 POST /insertcoordinate         controllers.Coordinates.insertCoordinate
 GET /deletecoordinate/:id      controllers.Coordinates.deleteCoordinate(id: Int)
@@ -47,3 +49,8 @@ GET /changeactive/:email           controllers.Users.changeActiveUser(email: Str
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+
+
+#Service functions in console mode
+GET /downloadCoordinates/:option/:size controllers.Application.downloadCoordinates(option: String, size: String)

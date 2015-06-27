@@ -89,18 +89,29 @@ object Application extends Controller {
    *
    * @return void
    */
-  def coordinatelist(limit: Int, offest: Int) = AuthAction {
+  def fullcoordinatelist() = AuthAction {
     val flash = play.api.mvc.Flash(Map(
 
     ))
-    Ok(views.html.coordinatelist.render(Coordinate.findAll(9999, 0), flash))
+    Ok(views.html.coordinatelist.render(Coordinate.findAll(), flash))
+  }
+
+  /**
+   * Show list of coordinates
+   *
+   * @return void
+   */
+  def somecoordinatelist(limit: Int, offset: Int) = AuthAction {
+    val flash = play.api.mvc.Flash(Map(
+
+    ))
+    Ok(views.html.coordinatelist.render(Coordinate.findSome(limit, offset), flash))
   }
 
   def showjwt = AuthAction {
     val jwtoken = User.getJWT("david.pinezich@gmail.com", "test");
     val jwTokenDecode = User.decodeJWT(jwtoken)
 
-    Coordinates.downloadFile()
     Ok(html.showjwt.render(jwtoken, jwTokenDecode))
   }
 
@@ -110,6 +121,12 @@ object Application extends Controller {
   def logout = Action {
     Redirect(routes.Application.login).withNewSession.flashing(
       "success" -> "You've been logged out")
+  }
+
+
+  def downloadCoordinates(opt: String, size: String) = Action {
+    Coordinates.downloadFile(opt, size);
+    Ok(html.downloader.render())
   }
 
 }

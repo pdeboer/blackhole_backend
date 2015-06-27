@@ -40,9 +40,29 @@ object Coordinates extends Controller {
    *
    * @return
    */
-  def downloadFile(): Boolean = {
+  def downloadFile(opt: String = "", size: String = "600"): Boolean = {
+
     val baseUrl = "http://skyservice.pha.jhu.edu/DR7/ImgCutout/getjpeg.aspx?"
-    val postfixUrl = "&opt=&width=2000&height=2000"
+
+    def matchTest(opt: String): String = opt match {
+      case "S" => "S" // red quadrat
+      case "R" => "R" // Gitter
+      case "T" => "T" // Crosses
+      case "I" => "I" // Inverted
+      case "O" => "O" // Objected (green figures)
+      case "P" => "P" // Objected (blue figures)
+      case "D" => "D" // Striked (one line)
+      case "F" => "F" // Striked (two lines)
+      case "G" => "G" // Crosshair
+      case "L" => "L" // With description
+      case "B" => "B" // purple quadrats
+      case _ => ""
+    }
+
+
+    val option = "&opt=" + opt
+    val pictureSize = "&width="+ size +"&height="+ size
+
     val zoomLevel = Map(
       1 -> 50.704256,
       2 -> 25.352128,
@@ -58,10 +78,10 @@ object Coordinates extends Controller {
       12 -> 0.0247579375,
       13 -> 0.015)
 
-    val coords = Coordinate.findAll(Coordinate.countCoordinates(), 0)
+    val coords = Coordinate.findAll()
     // not done by par because of server-spamming
     coords.par.foreach {coord =>
-      zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + postfixUrl, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
+      zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
     }
     true
   }
@@ -86,13 +106,13 @@ object Coordinates extends Controller {
   def insertCoordinate = Action { implicit request =>
     val flash = play.api.mvc.Flash(Map("error" -> "Coordinates were not inserted"))
     coordinatesForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.html.coordinatelist.render(Coordinate.findAll(1000, 0), flash)),
+      formWithErrors => BadRequest(views.html.coordinatelist.render(Coordinate.findAll(), flash)),
       tempCoordinates => {
         val Id = Coordinate.insertCoordinate(tempCoordinates.sdss_id, tempCoordinates.ra, tempCoordinates.dec)
         val flash = play.api.mvc.Flash(Map(
           "success" -> "User was succesfully inserted"
         ))
-        Ok(views.html.coordinatelist.render(Coordinate.findAll(1000, 0), flash))
+        Ok(views.html.coordinatelist.render(Coordinate.findAll(), flash))
       })
     }
 
@@ -108,7 +128,7 @@ object Coordinates extends Controller {
     val flash = play.api.mvc.Flash(Map(
       "success" -> "Coordinates successfully deleted"
     ))
-    Ok(views.html.coordinatelist.render(Coordinate.findAll(1000, 0), flash))
+    Ok(views.html.coordinatelist.render(Coordinate.findAll(), flash))
   }
 
   // Json part
@@ -119,7 +139,7 @@ object Coordinates extends Controller {
    * @return void
    */
   def list = Action {
-      val allCoordinates = Coordinate.findAll(Coordinate.countCoordinates(), 0).map(_.id)
+      val allCoordinates = Coordinate.findAll().map(_.id)
       Ok(Json.toJson(allCoordinates))
   }
 
