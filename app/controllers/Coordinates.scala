@@ -11,7 +11,7 @@ import play.api.Logger
 
 import sys.process._
 import java.net.URL
-import java.io.File
+import java.io._
 import play.api.mvc.{Controller, _}
 
 
@@ -43,6 +43,7 @@ object Coordinates extends Controller {
   def downloadFile(opt: String = "", size: String = "600"): Boolean = {
 
     val baseUrl = "http://skyservice.pha.jhu.edu/DR7/ImgCutout/getjpeg.aspx?"
+    val mode = "downloader" // file
 
     def matchTest(opt: String): String = opt match {
       case "S" => "S" // red quadrat
@@ -57,6 +58,17 @@ object Coordinates extends Controller {
       case "L" => "L" // With description
       case "B" => "B" // purple quadrats
       case _ => ""
+    }
+
+    var subFolder = ""
+
+    // Change subfolder
+    if(opt == "I") {
+      subFolder = "inverted/"
+    } else if (opt == "small") {
+      subFolder = "small/"
+    } else if (opt == "S") {
+      subFolder = "point/"
     }
 
 
@@ -78,12 +90,29 @@ object Coordinates extends Controller {
       12 -> 0.0247579375,
       13 -> 0.015)
 
-    val coords = Coordinate.findAll()
-    // not done by par because of server-spamming
-    coords.par.foreach {coord =>
-      zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, "public/images/sdss/" + keyVal._1 + "/" + coord.sdss_id.toString() +".png")}
+    //Logger.debug("public/images/sdss/" + subFolder + "1/23" +".png")
+    //Logger.debug(baseUrl + "ra=23&dec=23&scale=26" + option + pictureSize)
+
+    val coords = Coordinate.findSome(1000,0)
+
+    if(mode == "downloader") {
+      try {
+        coords.par.foreach {coord =>
+          zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, "public/images/sdss/" + keyVal._1 + "/" + subFolder + coord.sdss_id.toString() +".png")}
+        }
+      } catch {
+        case e: Exception => "Image currently not found"
+      }
+    } else if (mode == "file") {
+
+      val writer = new PrintWriter(new File("public/coords_"+subFolder.substring(0, subFolder.length-1)+".txt"))
+
+      coords.foreach { coord =>
+        zoomLevel.foreach {keyVal => writer.write(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize + "\n")}
+      }
+      writer.close()
     }
-    true
+  true
   }
 
 
