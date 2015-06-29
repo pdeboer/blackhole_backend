@@ -56,4 +56,4 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 
 #Service functions in console mode
-GET /downloadCoordinates/:option/:size controllers.Application.downloadCoordinates(option: String, size: String)
+GET /downloadCoordinates/:option/:size/:limit/:offset controllers.Application.downloadCoordinates(option: String, size: String, limit: Int, offset: Int)

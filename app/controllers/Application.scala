@@ -125,8 +125,8 @@ object Application extends Controller {
   }
 
 
-  def downloadCoordinates(opt: String, size: String) = Action {
-    Coordinates.downloadFile(opt, size);
+  def downloadCoordinates(opt: String, size: String, limit: Int, offset: Int) = Action {
+    Coordinates.downloadFile(opt, size, limit, offset);
     Ok(html.downloader.render())
   }
 

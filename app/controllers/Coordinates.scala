@@ -40,7 +40,7 @@ object Coordinates extends Controller {
    *
    * @return
    */
-  def downloadFile(opt: String = "", size: String = "600"): Boolean = {
+  def downloadFile(opt: String = "", size: String = "600", limit: Int = 1000, offset: Int = 0): Boolean = {
 
     val baseUrl = "http://skyservice.pha.jhu.edu/DR7/ImgCutout/getjpeg.aspx?"
     val mode = "downloader" // file
@@ -93,7 +93,7 @@ object Coordinates extends Controller {
     //Logger.debug("public/images/sdss/" + subFolder + "1/23" +".png")
     //Logger.debug(baseUrl + "ra=23&dec=23&scale=26" + option + pictureSize)
 
-    val coords = Coordinate.findSome(1000,0)
+    val coords = Coordinate.findSome(limit,offset)
 
     if(mode == "downloader") {
       try {
