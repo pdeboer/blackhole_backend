@@ -96,6 +96,7 @@ object Application extends Controller {
     Ok(views.html.coordinatelist.render(Coordinate.findAll(), flash))
   }
 
+
   /**
    * Show list of coordinates
    *

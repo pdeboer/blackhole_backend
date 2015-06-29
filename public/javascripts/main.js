@@ -8,6 +8,7 @@ $(document).ready(function() {
             }
     });
     $('#coordtable').dataTable();
+    $('#worksettable').dataTable();
     $('#tasklogtable').dataTable( {
         "initComplete": function () {
          var api = this.api();

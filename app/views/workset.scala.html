@@ -1,0 +1,39 @@
+@(worksets: List[Workset])(implicit flash: Flash)
+
+@flash.get("error").map { errorMessage =>
+<div class="alert alert-danger" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span class="sr-only">Error:</span>
+    @errorMessage
+</div>
+}
+
+@main("Workset") {
+<h3>Workset:</h3>
+
+<table id="worksettable" class="table table-striped">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Coordinates Id</th>
+        <th>Set Id</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>Id</th>
+        <th>Coordinates Id</th>
+        <th>Set Id</th>
+    </tr>
+    </tfoot>
+
+    <tbody>
+    @for(workset <- worksets) {
+    <tr>
+        <td>@workset.id</td>
+        <td>@workset.coordinates_id</td>
+        <td>@workset.set_id</td>
+    }
+    </tbody>
+</table><br /><br />
+}
