@@ -2,6 +2,9 @@ angular.module( 'pplibdataanalyzer_frontend', [
   'pplibdataanalyzer_frontend.home',
   'pplibdataanalyzer_frontend.login',
   'pplibdataanalyzer_frontend.signup',
+  'pplibdataanalyzer_frontend.search',
+    'pplibdataanalyzer_frontend.contact',
+    'pplibdataanalyzer_frontend.about',
   'angular-jwt',
   'angular-storage'
 ])

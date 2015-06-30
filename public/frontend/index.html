@@ -18,6 +18,9 @@
     <link rel="stylesheet" type="text/css" href="home/home.css">
     <link rel="stylesheet" type="text/css" href="signup/signup.css">
     <link rel="stylesheet" type="text/css" href="login/login.css">
+    <link rel="stylesheet" type="text/css" href="search/search.css">
+    <link rel="stylesheet" type="text/css" href="about/about.css">
+    <link rel="stylesheet" type="text/css" href="contact/contact.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -40,6 +43,9 @@
     <script type="text/javascript" src="home/home.js"></script>
     <script type="text/javascript" src="login/login.js"></script>
     <script type="text/javascript" src="signup/signup.js"></script>
+    <script type="text/javascript" src="search/search.js"></script>
+    <script type="text/javascript" src="contact/contact.js"></script>
+    <script type="text/javascript" src="about/about.js"></script>
     <script type="text/javascript"  src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
 
@@ -67,19 +73,19 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li style="color: red;">
-            <a class="nav-active" href="index.html">Home</a>
+            <a class="nav-active" href="index.html#/home">Home</a>
           </li>
           <li>
             <a href="index.html#/login">Register</a>
           </li>
           <li>
-            <a href="search.html">Start Searching</a>
+            <a href="index.html#/search">Start Searching</a>
           </li>
           <li>
-            <a href="about.html">About</a>
+            <a href="index.html#/about">About</a>
           </li>
           <li>
-            <a href="contact.html">Contact</a>
+            <a href="index.html#/contact">Contact</a>
           </li>
         </ul>
       </div>
@@ -88,5 +94,15 @@
     <!-- /.container -->
   </nav>
     <div ui-view></div>
+
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <p><a href="http://www.ifi.uzh.ch/ddis.html">DDIS</a> @ <a href="http://www.uzh.ch">University of Zurich</a> and <a href="mailto:david.pinezich@gmail.com">David Pinezich</a></p>
+        </div>
+      </div>
+    </div>
+  </footer>
   </body>
 </html>
