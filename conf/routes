@@ -53,7 +53,7 @@ GET /workset/:id        controllers.Worksets.getWorkset(id: Int)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /images/*file                   controllers.Images.at(path="/Users/dave/Sites/sdss", file)
-GET     /frontend/*file                   controllers.Frontend.at(path="frontend", file)
+GET     /frontend/*file                   controllers.Frontend.at(path="/frontend", file)
 
 
 
