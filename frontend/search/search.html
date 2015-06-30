@@ -11,31 +11,37 @@
             </div>
 
             <div ng-app="search">
-                <div ng-controller="mainSearch">
+                <div ng-controller="SearchCtrl">
                     <div class="col-md-6">
                         <!-- Embedded Google Map using an iframe - to select your location find it on Google maps and paste the link as the iframe src. If you want to use the Google Maps API instead then have at it! -->
-                        <img style="max-width: 500px;" ng-src="{{uri}}" />
+                        <a href="#" ><img class="imagedropshadow" style="max-width: 500px;" ng-src="{{uri}}" /></a>
                     </div>
                     <div class="col-md-6">
+                        <!--
                         <div class="alert alert-danger" role="alert">
                             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                             <span class="sr-only">New here?:</span>
                             If you are new to the topic, check out the <a href="">guided mode</a>
                         </div>
-
+                        !-->
+                        <div class="question dropshadowclass" style="text-align: center;">
                         <p>Is it a clumpy structure? <a style="text-decoration: none; color: black;" href="#" data-toggle="tooltip" title="Here goes some examplanatory description about what a clumpy object is....."><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></a> </p>
-                        <form ng-submit="submit()" ng-controller="ExampleController">
+                        <form ng-submit="submit()">
                             <label class="radio-inline">
                                 <input type="radio" name="inlineRadioOptions" id="yes" value="yes"> yes
                             </label>
                             <label class="radio-inline">
                                 <input type="radio" name="inlineRadioOptions" id="no" value="no"> no
-                            </label>
-                            <button type="submit" class="btn btn-primary">Send</button>
-                        </form>
+                            </label><br /><br />
+                            <button type="submit" class="btn btn-lg btn-primary">Send</button>
+                        </form><br />
+                        </div>
+                        <br /><br />
+                        <div class="tools dropshadowclass" style="text-align: center;">
+                            <p>Tools:</p>
 
+                        </div>
                     </div>
-
                     <div class="clearfix"></div>
                 </div>
             </div>
