@@ -17,7 +17,7 @@ import anorm.SqlParser._
  * @param answer Tasklog answer
  * @param ip Tasklog ip
  */
-case class Tasklog(uuid: String, coordinates_id: Int, question_id: Int, answer: String, ip: String)
+case class Tasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String)
 
 object Tasklog {
 
@@ -40,9 +40,22 @@ object Tasklog {
    */
   def findById(uuid: Int): Option[Tasklog] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * from tasklog WHERE uuid = {uuid}").on('uuid -> uuid).as(Tasklog.simpleTasklog.singleOpt)
+      SQL("SELECT * FROM tasklog WHERE uuid = {uuid}").on('uuid -> uuid).as(Tasklog.simpleTasklog.singleOpt)
     }
   }
+
+  /**
+   * Find tasklog piece by id
+   *
+   * @param uuid
+   * @return
+   */
+  def findLastLogEntry(uuid: String): Option[Tasklog] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT * FROM tasklog WHERE uuid = {uuid} ORDER BY timestamp DESC LIMIT 1").on('uuid -> uuid).as(Tasklog.simpleTasklog.singleOpt)
+    }
+  }
+
 
   /**
    * Insert Tasklog
@@ -54,7 +67,7 @@ object Tasklog {
    * @param ip
    * @return
    */
-  def insertTasklog(uuid: String, coordinates_id: Int, question_id: Int, answer: String, ip: String): Option[Long] = {
+  def insertTasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
       SQL("INSERT INTO tasklog(`uuid`, `coordinates_id`, `question_id`, `answer`, `ip`) VALUES ({uuid}, {coordinates_id}, {question_id}, {answer}, {ip})")
         .on('uuid -> uuid)
@@ -72,7 +85,7 @@ object Tasklog {
    */
   val simpleTasklog = {
       get[String]("uuid") ~ // get[Option[Int]]
-        get[Int]("coordinates_id") ~
+        get[BigDecimal]("coordinates_id") ~
         get[Int]("question_id") ~
       get[String]("answer") ~
         get[String]("ip") map {

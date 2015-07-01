@@ -50,7 +50,7 @@ object Tasklogs extends Controller {
    */
   implicit val tasklogReads: Reads[Tasklog] = (
       (JsPath \ "uuid").read[String] and
-        (JsPath \ "coordinates_id").read[Int] and
+        (JsPath \ "coordinates_id").read[BigDecimal] and
       (JsPath \ "question_id").read[Int] and
       (JsPath \ "answer").read[String] and
         (JsPath \ "ip").read[String]

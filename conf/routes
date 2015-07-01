@@ -50,6 +50,9 @@ GET /changeactive/:email           controllers.Users.changeActiveUser(email: Str
 #workset
 GET /workset/:id        controllers.Worksets.getWorkset(id: Int)
 
+#Taskdaemon
+POST /daemon/nextAction     controllers.TaskDaemon.getNext
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 GET     /images/*file                   controllers.Images.at(path="/Users/dave/Sites/sdss", file)

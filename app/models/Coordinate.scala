@@ -52,7 +52,19 @@ object Coordinate {
    */
   def findById(id: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * FROM coordinates WHERE id = {id}").on('id -> id).as(Coordinate.simpleCoordinates.singleOpt)
+      SQL("SELECT * FROM coordinates WHERE id = {id} LIMIT 1").on('id -> id).as(Coordinate.simpleCoordinates.singleOpt)
+    }
+  }
+
+  /**
+   * Find Coordinates by Id
+   *
+   * @param sdss_id
+   * @return
+   */
+  def findBySdssId(sdss_id: BigDecimal): Option[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT * FROM coordinates WHERE sdss_id = {sdss_id}").on('sdss_id -> sdss_id).as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
 
@@ -66,6 +78,17 @@ object Coordinate {
     SQL("SELECT * FROM coordinates ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
   }
 }
+
+  /**
+   * Find Random Coordinates
+   *
+   * @return
+   */
+  def findByRandWithSet(): Option[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT coordinates.Id, coordinates.sdss_id, coordinates.ra, coordinates.dec, coordinates.active FROM coordinates INNER JOIN coordinatesToSet ON coordinates.id = coordinatesToSet.coordinates_id INNER JOIN pplibdataanalyzer.set ON coordinatesToSet.set_id = pplibdataanalyzer.set.id WHERE pplibdataanalyzer.set.id = 1 ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
+    }
+  }
 
   /**
    * Count Coordinates

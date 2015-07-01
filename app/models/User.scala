@@ -89,6 +89,22 @@ object User {
   }
 
   /**
+   * Get the uuid by email
+   *
+   * @param email
+   * @return
+   */
+  def getUuidByEmail(email: String): String = {
+    DB.withConnection { implicit connection =>
+      val rowOption = SQL("SELECT uuid as uuid FROM users WHERE email = {email} AND active = 1 LIMIT 1")
+        .on('email -> email)
+        .apply
+        .headOption
+      rowOption.map(row => row[String]("uuid")).getOrElse("")
+    }
+  }
+
+  /**
    * Get the JW Token
    *
    * @param email
@@ -107,8 +123,8 @@ object User {
    *
    * @param token
    */
-  def decodeJWT(token: String): io.really.jwt.JWTResult = {
-    val jwTokenDecoded = JWT.decode(token, Some(secret))
+  def decodeJWT(token: String):  play.api.libs.json.JsObject = {
+    val jwTokenDecoded = JWT.decode(token, Some(secret)).asInstanceOf[JWTResult.JWT].payload
     jwTokenDecoded
   }
 
