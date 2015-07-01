@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Erstellungszeit: 30. Jun 2015 um 08:40
+-- Erstellungszeit: 01. Jul 2015 um 01:25
 -- Server-Version: 5.6.24
 -- PHP-Version: 5.5.20
 
@@ -49729,19 +49729,19 @@ INSERT INTO `set` (`id`, `set_name`, `is_active`) VALUES
 CREATE TABLE IF NOT EXISTS `tasklog` (
   `id` int(11) NOT NULL,
   `uuid` varchar(255) DEFAULT NULL,
-  `coordinates_id` int(11) unsigned DEFAULT NULL,
+  `coordinates_id` bigint(20) unsigned DEFAULT NULL,
   `question_id` int(11) unsigned DEFAULT NULL,
   `answer` varchar(45) DEFAULT NULL,
   `ip` varchar(45) DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `tasklog`
 --
 
 INSERT INTO `tasklog` (`id`, `uuid`, `coordinates_id`, `question_id`, `answer`, `ip`, `timestamp`) VALUES
-(48, 'f4957a2c-921d-4cd0-9634-a9da89c9c3ef', 1, 1, 'yes', '77.57.13.24', '2015-06-26 03:02:38');
+(66, '1b6bcc5d-d5e6-4163-8330-070d1238d417', 587735696442392700, 1, 'yes', '77.57.13.24', '2015-07-01 00:44:27');
 
 -- --------------------------------------------------------
 
@@ -49895,7 +49895,7 @@ ALTER TABLE `set`
 -- AUTO_INCREMENT für Tabelle `tasklog`
 --
 ALTER TABLE `tasklog`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=67;
 --
 -- AUTO_INCREMENT für Tabelle `users`
 --
