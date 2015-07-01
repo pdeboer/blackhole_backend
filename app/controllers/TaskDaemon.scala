@@ -57,6 +57,7 @@ object TaskDaemon extends Controller {
           // Get coordinates
           var coordinates: Option[Coordinate] = null
 
+
           lastEntry match {
             case None => coordinates = newJob()
             case entry: Tasklog => {
@@ -64,7 +65,6 @@ object TaskDaemon extends Controller {
               if(entry.question_id > 2) { // @ToDo remove if more questions are available
                 coordinates = newJob()
               } else {
-                Logger.debug(entry.coordinates_id.toString())
                 coordinates = Coordinate.findBySdssId(entry.coordinates_id)
                 questionId = entry.question_id + 1
               }
@@ -72,7 +72,6 @@ object TaskDaemon extends Controller {
 
             }
           }
-
           coordinates match {
             case Some(coords) =>
               coordinatesRa = coords.ra
@@ -97,17 +96,17 @@ object TaskDaemon extends Controller {
             case None => println("No Task")
           }
 
-          Ok(coorddinatesSdssId.toString())
 
-          /*
+
+
           val returnObject = Json.toJson(
             Map(
               "return" -> Seq(
                 Json.toJson(
                   Map(
-                    "sdss_id" -> Json.toJson(coorddinatesSdssId),
-                    "ra" -> Json.toJson(coordinatesRa),
-                    "dec" -> Json.toJson(coordinatesDec),
+                    "sdss_id" -> Json.toJson(coorddinatesSdssId.toString()),
+                    "ra" -> Json.toJson(coordinatesRa.toString()),
+                    "dec" -> Json.toJson(coordinatesDec.toString()),
                     "answer" -> Json.toJson(taskTyp),
                     "question" -> Json.toJson(task),
                     "question_id" -> Json.toJson(taskId.toString)
@@ -120,7 +119,7 @@ object TaskDaemon extends Controller {
 
 
           Ok(returnObject)
-          */
+
         }
       }.recoverTotal{
         e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
