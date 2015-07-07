@@ -1,6 +1,6 @@
 package controllers
 
-import models.Tasklog
+import models.{User, Tasklog}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -61,8 +61,13 @@ object Tasklogs extends Controller {
     //Logger.info("start")
     try {
       val tasklogJson = request.body
-      val log = tasklogJson.as[Tasklog] //@todo set id as optional
-      val id = Tasklog.insertTasklog(log.uuid, log.coordinates_id, log.question_id, log.answer, log.ip)
+      val log = tasklogJson.as[Tasklog] //@todo set id as optional //@todo rename uuid with jwt
+
+      val jwTokenDecode = User.decodeJWT(log.uuid)
+      val email = jwTokenDecode.value("email").toString.replace("\"", "")
+      val uuid = User.getUuidByEmail(email)
+
+      val id = Tasklog.insertTasklog(uuid, log.coordinates_id, log.question_id, log.answer, log.ip)
       Ok(id.get.toString())
     }
     catch {

@@ -94,11 +94,11 @@ object Coordinates extends Controller {
     //Logger.debug(baseUrl + "ra=23&dec=23&scale=26" + option + pictureSize)
 
     val coords = Coordinate.findSome(limit,offset)
-
+    val imageDirectory = Play.current.configuration.getString("imageDirectory")
     if(mode == "downloader") {
       try {
         coords.par.foreach {coord =>
-          zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, "public/images/sdss/" + keyVal._1 + "/" + subFolder + coord.sdss_id.toString() +".png")}
+          zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, imageDirectory + keyVal._1 + "/" + subFolder + coord.sdss_id.toString() +".png")}
         }
       } catch {
         case e: Exception => "Image currently not found"
