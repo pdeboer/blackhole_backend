@@ -1,19 +1,14 @@
 package controllers
 
 import models.{User, Task, Coordinate, Tasklog}
-import play.api.Logger
-import play.api.data._
-import play.api.data.Forms._
 import play.api.mvc.{Controller, _}
-import play.api._
 import play.api.mvc._
 import play.api.libs.json._
+import play.api.Logger
+
 
 // you need this import to have combinators
 import play.api.libs.functional.syntax._
-
-
-
 
 
 object TaskDaemon extends Controller {
@@ -42,11 +37,12 @@ object TaskDaemon extends Controller {
           var taskFormerTaskId: Integer = null
           var taskLaterTaskId: Integer = null
           var taskExitOn: String = null
+          var taskComment: String = null
 
+          // Standard for questions
           var questionId: Integer = 1
 
-
-
+          // Get uuid by jwt
           val jwTokenDecode = User.decodeJWT(jwt)
           val email = jwTokenDecode.value("email").toString.replace("\"", "")
           val uuid = User.getUuidByEmail(email)
@@ -57,21 +53,40 @@ object TaskDaemon extends Controller {
           // Get coordinates
           var coordinates: Option[Coordinate] = null
 
+          // Task constraint for the last task
+          var taskConstraint: Option[Task] = null
+          var taskConstraintExitOn = ""
+          var taskConstraintLaterTaskId = 0
+
 
           lastEntry match {
             case None => coordinates = newJob()
             case entry: Tasklog => {
 
-              if(entry.question_id > 2) { // @ToDo remove if more questions are available
+              Task.findById(entry.question_id).map { tConstraint =>
+                taskConstraintExitOn = tConstraint.exitOn
+                taskConstraintLaterTaskId = tConstraint.laterTaskId
+              }
+
+              //Logger.debug(taskConstraintLaterTaskId.toString)
+              //Logger.debug(taskConstraintExitOn)
+              //Logger.debug(entry.answer)
+
+              if(entry.answer == taskConstraintExitOn || taskConstraintLaterTaskId == 0) {
+                //Logger.debug("New Job")
                 coordinates = newJob()
+              } else if(entry.answer == "no" && taskConstraintExitOn == "halt") {
+                coordinates = Coordinate.findBySdssId(entry.coordinates_id)
+                questionId = entry.question_id + 2
               } else {
+                //Logger.debug("old job cont")
                 coordinates = Coordinate.findBySdssId(entry.coordinates_id)
                 questionId = entry.question_id + 1
               }
 
-
             }
           }
+
           coordinates match {
             case Some(coords) =>
               coordinatesRa = coords.ra
@@ -93,6 +108,7 @@ object TaskDaemon extends Controller {
               taskFormerTaskId = nextTask.formerTaskId
               taskLaterTaskId = nextTask.laterTaskId
               taskExitOn = nextTask.exitOn
+              taskComment = nextTask.comment
             case None => println("No Task")
           }
 
@@ -109,7 +125,8 @@ object TaskDaemon extends Controller {
                     "dec" -> Json.toJson(coordinatesDec.toString()),
                     "answer" -> Json.toJson(taskTyp),
                     "question" -> Json.toJson(task),
-                    "question_id" -> Json.toJson(taskId.toString)
+                    "question_id" -> Json.toJson(taskId.toString),
+                    "tooltip" -> Json.toJson(taskComment)
                   )
                 )
               )
