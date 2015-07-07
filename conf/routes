@@ -53,6 +53,9 @@ GET /workset/:id        controllers.Worksets.getWorkset(id: Int)
 #Taskdaemon
 POST /daemon/nextAction     controllers.TaskDaemon.getNext
 
+#Comment
+POST /comment                controllers.Comments.save
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 

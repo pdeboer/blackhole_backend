@@ -19,7 +19,7 @@ object Tasks extends Controller {
     Ok(Json.toJson(allTasks))
   }
   /**
-   * Formats a Product instance as JSON.
+   * Formats a Task instance as JSON.
    */
   implicit object UserWrites extends Writes[Task] {
     def writes(t: Task) = Json.obj(
