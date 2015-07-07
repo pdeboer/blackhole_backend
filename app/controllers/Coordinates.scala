@@ -9,6 +9,7 @@ import play.api.Play
 import sys.process._
 import java.net.URL
 import java.io._
+import play.api.Logger
 import play.api.mvc.{Controller, _}
 
 
@@ -91,11 +92,16 @@ object Coordinates extends Controller {
     //Logger.debug(baseUrl + "ra=23&dec=23&scale=26" + option + pictureSize)
 
     val coords = Coordinate.findSome(limit,offset)
-    val imageDirectory = Play.current.configuration.getString("image.directory")
+    val imageDirectory = Play.current.configuration.getString("image.directory").get
     if(mode == "downloader") {
       try {
         coords.par.foreach {coord =>
-          zoomLevel.par.foreach {keyVal => fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, imageDirectory + keyVal._1 + "/" + subFolder + coord.sdss_id.toString() +".png")}
+
+          zoomLevel.par.foreach {keyVal =>
+            //Logger.debug(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize)
+            //Logger.debug(imageDirectory + keyVal._1.toString + "/" + subFolder + coord.sdss_id.toString() +".png")
+            fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, imageDirectory + keyVal._1.toString + "/" + subFolder + coord.sdss_id.toString() +".png")
+            }
         }
       } catch {
         case e: Exception => "Image currently not found"
