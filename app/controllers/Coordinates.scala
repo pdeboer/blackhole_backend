@@ -1,14 +1,11 @@
 package controllers
 
 import models.Coordinate
-import play.api.Logger
 import play.api.data._
-import play.api.cache._
 import play.api.data.Forms._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import play.api.Logger
-
+import play.api.Play
 import sys.process._
 import java.net.URL
 import java.io._
@@ -94,7 +91,7 @@ object Coordinates extends Controller {
     //Logger.debug(baseUrl + "ra=23&dec=23&scale=26" + option + pictureSize)
 
     val coords = Coordinate.findSome(limit,offset)
-    val imageDirectory = Play.current.configuration.getString("imageDirectory")
+    val imageDirectory = Play.current.configuration.getString("image.directory")
     if(mode == "downloader") {
       try {
         coords.par.foreach {coord =>
