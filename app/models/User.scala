@@ -113,9 +113,17 @@ object User {
    */
   def getJWT(email: String, password: String): String = {
     // @ToDo do timestamp automatic + 1month
-    val payload = Json.obj("email" -> email, "password" -> password, "data" -> 1466899053)
-    val jwToken = JWT.encode(secret, payload)
-    jwToken
+    val checkUser = findByEmailAndPassword(email, password)
+    checkUser match {
+      case None => ""
+      case user: Option[User] => {
+        val payload = Json.obj ("email" -> email, "password" -> password, "data" -> 1466899053)
+        val jwToken = JWT.encode (secret, payload)
+        jwToken
+    }
+
+    }
+
   }
 
   /**
