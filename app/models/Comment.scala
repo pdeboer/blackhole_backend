@@ -58,15 +58,16 @@ object Comment {
    * @return
    */
   def insertComment(sdss_id: BigDecimal, set_id: Int, rating: Int, comment: String, ip: String): Option[Long] = {
-    val id: Option[Long] = DB.withConnection { implicit connection =>
-      SQL("INSERT INTO comments(`sdss_id`, `set_id`, `rating`, `comment`, `ip`) VALUES ({sdss_id}, {set_id}, {rating}, {comment}, {ip}")
-        .on('sdss_id -> sdss_id)
-        .on('set_id -> set_id)
-        .on('rating -> rating)
-        .on('comment -> comment)
-        .on('ip -> ip)
-        .executeInsert()
-    }
+     Logger.debug(sdss_id.toString + " " + set_id.toString + " " + rating.toString + " " + comment + " " + ip)
+     val id: Option[Long] = DB.withConnection { implicit connection =>
+       SQL("INSERT INTO comments(`sdss_id`, `set_id`, `rating`, `comment`, `ip`) VALUES ({sdss_id}, {set_id}, {rating}, {comment}, {ip})")
+         .on('sdss_id -> sdss_id)
+         .on('set_id -> set_id)
+         .on('rating -> rating)
+         .on('comment -> comment)
+         .on('ip -> ip)
+         .executeInsert()
+     }
     id
   }
   /**
