@@ -15,8 +15,9 @@ import anorm.SqlParser._
  * @param set_id Comment set_id
  * @param rating Comment rating
  * @param comment Comment comment
+ * @param ip Comment ip
  */
-case class Comment(sdss_id: BigDecimal, set_id: Int, rating: Int, comment: String)
+case class Comment(sdss_id: BigDecimal, set_id: Int, rating: Int, comment: String, ip: String)
 /**
  * Task data access
  */
@@ -53,15 +54,17 @@ object Comment {
    * @param set_id
    * @param rating
    * @param comment
+   * @param ip
    * @return
    */
-  def insertComment(sdss_id: BigDecimal, set_id: Int, rating: Int, comment: String): Option[Long] = {
+  def insertComment(sdss_id: BigDecimal, set_id: Int, rating: Int, comment: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
-      SQL("INSERT INTO comments(`sdss_id`, `set_id`, `rating`, `comment`) VALUES ({sdss_id}, {set_id}, {rating}, {comment})")
+      SQL("INSERT INTO comments(`sdss_id`, `set_id`, `rating`, `comment`, `ip`) VALUES ({sdss_id}, {set_id}, {rating}, {comment}, {ip)")
         .on('sdss_id -> sdss_id)
         .on('set_id -> set_id)
         .on('rating -> rating)
         .on('comment -> comment)
+        .on('ip -> ip)
         .executeInsert()
     }
     id
@@ -73,8 +76,9 @@ object Comment {
       get[BigDecimal]("sdss_id")~
       get[Int]("set_id") ~
       get[Int]("rating") ~
-      get[String]("comment") map {
-      case sdss_id~set_id~rating~comment => Comment(sdss_id, set_id, rating, comment)
+      get[String]("comment") ~
+        get[String]("ip") map {
+      case sdss_id~set_id~rating~comment~ip => Comment(sdss_id, set_id, rating, comment, ip)
     }
   }
 

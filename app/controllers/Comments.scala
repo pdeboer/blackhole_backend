@@ -29,7 +29,8 @@ object Comments extends Controller {
       "sdss_id" -> Json.toJson(c.sdss_id),
       "set_id" -> Json.toJson(c.set_id),
       "rating" -> Json.toJson(c.rating),
-      "comment" -> Json.toJson(c.comment)
+      "comment" -> Json.toJson(c.comment),
+      "ip" -> Json.toJson(c.ip)
     )
   }
 
@@ -51,9 +52,9 @@ object Comments extends Controller {
     //Logger.info("start")
     try {
       val commentJson = request.body
-      val comment = commentJson.as[Comment] //@todo set id as optional //@todo rename uuid with jwt
-      Logger.debug(comment.sdss_id.toString + " " + comment.set_id.toString + " " + comment.rating.toString + " " + comment.comment)
-      val id = Comment.insertComment(comment.sdss_id, comment.set_id, comment.rating, comment.comment)
+      val comment = commentJson.as[Comment]
+      //Logger.debug(comment.sdss_id.toString + " " + comment.set_id.toString + " " + comment.rating.toString + " " + comment.comment)
+      val id = Comment.insertComment(comment.sdss_id, comment.set_id, comment.rating, comment.comment, comment.ip)
       Ok(id.get.toString())
     }
     catch {
@@ -75,7 +76,8 @@ object Comments extends Controller {
       (JsPath \ "sdss_id").read[BigDecimal] and
       (JsPath \ "set_id").read[Int] and
       (JsPath \ "rating").read[Int] and
-      (JsPath \ "comment").read[String]
+      (JsPath \ "comment").read[String] and
+        (JsPath \ "ip").read[String]
     )(Comment.apply _)
 
 }
