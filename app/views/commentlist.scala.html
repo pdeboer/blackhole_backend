@@ -1,0 +1,39 @@
+@(comments: List[Comment])
+
+@main("All Comments") {
+
+
+<table id="tasklogtable" class="table table-striped">
+    <thead>
+    <tr>
+        <th>sdss_id</th>
+        <th>set_id</th>
+        <th>rating</th>
+        <th>comment</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>sdss_id</th>
+        <th>set_id</th>
+        <th>rating</th>
+        <th>comment</th>
+    </tr>
+    </tfoot>
+    <tbody>
+    @for(comment <- comments) {
+    <tr>
+        <td>@comment.sdss_id</td>
+        <td>@comment.set_id</td>
+        <td>@comment.rating</td>
+        <td>@comment.comment</td>
+    </tr>
+    }
+    </tbody>
+</table><br />
+
+
+
+
+
+}

@@ -2,7 +2,7 @@ package controllers
 
 import core.AuthAction
 import views._
-import models.{User, Task, Coordinate, Tasklog}
+import models.{User, Task, Coordinate, Tasklog, Comment}
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
@@ -51,6 +51,16 @@ object Application extends Controller {
   }
 
   /**
+   * Show tasklist
+   *
+   * @return void
+   */
+  def commentlist = AuthAction {
+    Ok(views.html.commentlist.render(Comment.findAll()))
+  }
+
+
+  /**
    * Shows the index
    * @return
    */
@@ -61,6 +71,7 @@ object Application extends Controller {
       Unauthorized("Not connected")
     }
   }
+
   /**
    * Show list of logged tasks
    *
@@ -68,6 +79,15 @@ object Application extends Controller {
    */
   def taskloglist = AuthAction {
     Ok(views.html.tasklog.render(Tasklog.findAll()))
+  }
+
+  /**
+   * Show list of logged tasks
+   *
+   * @return void
+   */
+  def taskloglistTop = AuthAction {
+    Ok(views.html.taskloglistTop.render(Tasklog.findbestRated()))
   }
 
 

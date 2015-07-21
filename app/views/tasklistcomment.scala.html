@@ -1,0 +1,17 @@
+@(task: Task)
+
+@main("Task Example") {
+
+<form method="post" autocomplete="on" action="/tasks/updatecomment">
+    <div class="form-group">
+        <label for="comment">Example:</label>
+        <textarea id="comment" class="form-control" rows="3" name="comment">@task.comment</textarea>
+    </div>
+    <input type="hidden" class="" id="taskid" value="@task.id" name="taskid">
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+}
+
+
+<script>$('#comment').trumbowyg();</script>

@@ -53,7 +53,7 @@ object Comments extends Controller {
     try {
       val commentJson = request.body
       val comment = commentJson.as[Comment]
-      //Logger.debug(comment.sdss_id.toString + " " + comment.set_id.toString + " " + comment.rating.toString + " " + comment.comment)
+     // Logger.debug(comment.sdss_id.toString + " " + comment.set_id.toString + " " + comment.rating.toString + " " + comment.comment + " " + comment.ip)
       val id = Comment.insertComment(comment.sdss_id, comment.set_id, comment.rating, comment.comment, comment.ip)
       Ok(id.get.toString())
     }

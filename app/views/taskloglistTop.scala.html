@@ -1,0 +1,35 @@
+@(ratedTasklogs: List[ratedTasklog])
+
+@main("Best rated Task") {
+<h3>Best rated coordinates:</h3>
+<table id="tasklogtable" class="table table-striped">
+    <thead>
+    <tr>
+        <th>rating</th>
+        <th>uuid</th>
+        <th>ip</th>
+        <th>coordinates_id</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th>rating</th>
+        <th>uuid</th>
+        <th>ip</th>
+        <th>coordinates_id</th>
+    </tr>
+    </tfoot>
+    <tbody>
+    @for(ratedTasklog <- ratedTasklogs) {
+    <tr>
+        <td>@ratedTasklog.rating</td>
+        <td>@ratedTasklog.uuid</td>
+        <td>@ratedTasklog.ip</td>
+        <td>@ratedTasklog.coordinates_id</td>
+    </tr>
+    }
+    </tbody>
+</table><br />
+
+
+}

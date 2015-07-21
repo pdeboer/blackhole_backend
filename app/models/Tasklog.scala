@@ -19,6 +19,18 @@ import anorm.SqlParser._
  */
 case class Tasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String)
 
+
+/**
+ * An entry in the Tasklog list
+ *
+ * @param uuid Tasklog uuid
+ * @param coordinates_id Tasklog coordinates_id
+ * @param question Tasklog question
+ * @param answer Tasklog answer
+ * @param ip Tasklog ip
+ */
+case class ratedTasklog(rating: Int, uuid: String, ip: String, coordinates_id: BigDecimal)
+
 object Tasklog {
 
   /**
@@ -56,6 +68,19 @@ object Tasklog {
     }
   }
 
+  /**
+   * Find best rated
+   *
+   * @param uuid
+   * @return
+   */
+  def findbestRated(): List[ratedTasklog] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT SUM(IF(tasklog.answer = 'yes', tasks.value, 0)) AS rating, uuid, ip, coordinates_id FROM pplibdataanalyzer.tasklog INNER JOIN tasks ON tasks.id = question_id GROUP BY coordinates_id ORDER BY rating DESC").as(Tasklog.ratedTasklist *)
+    }
+  }
+
+
 
   /**
    * Insert Tasklog
@@ -90,6 +115,15 @@ object Tasklog {
       get[String]("answer") ~
         get[String]("ip") map {
       case uuid~coordinates_id~question_id~answer~ip => Tasklog(uuid, coordinates_id, question_id, answer, ip)
+    }
+  }
+
+  val ratedTasklist = {
+    get[Int]("rating") ~ // get[Option[Int]]
+      get[String]("uuid") ~
+      get[String]("ip") ~
+      get[BigDecimal]("coordinates_id") map {
+      case rating~uuid~ip~coordinates_id => ratedTasklog(rating, uuid, ip, coordinates_id)
     }
   }
 

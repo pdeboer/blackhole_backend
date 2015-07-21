@@ -17,9 +17,10 @@ import anorm.SqlParser._
  * @param formerTaskId Task formerTaskId
  * @param laterTaskId Task laterTaskId
  * @param exitOn Task exitOn
+ * @param businessRule Taks businessRule
  * @param comment Task comment
  */
-case class Task(id: Int, task: String, taskType: String, value: Int, formerTaskId: Int, laterTaskId: Int, exitOn: String, comment: String)
+case class Task(id: Int, task: String, taskType: String, value: Int, formerTaskId: Int, laterTaskId: Int, exitOn: String, businessRule: String, comment: String)
 
 /**
  * Task data access
@@ -33,7 +34,7 @@ object Task {
    */
   def findAll(): List[Task] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from tasks").as(Task.simpleTask *)
+      SQL("SELECT * FROM tasks").as(Task.simpleTask *)
     }
   }
 
@@ -49,6 +50,20 @@ object Task {
     }
   }
 
+
+
+  def updateComment(id: Int, comment: String): Int = {
+    DB.withConnection( { implicit connection =>
+      val result = SQL("UPDATE tasks SET `comment` = {comment} WHERE `id` = {id}")
+        .on('comment -> comment)
+        .on('id -> id)
+        .executeUpdate()
+    })
+    1
+  }
+
+
+
   /**
    * Task structure
    */
@@ -60,8 +75,9 @@ object Task {
       get[Int]("formerTaskId") ~
       get[Int]("laterTaskId") ~
       get[String]("exitOn")~
+      get[String]("businessRule")~
       get[String]("comment") map {
-      case id~task~taskType~value~formerTaskId~laterTaskId~exitOn~comment => Task(id, task, taskType, value, formerTaskId, laterTaskId, exitOn, comment)
+      case id~task~taskType~value~formerTaskId~laterTaskId~exitOn~businessRule~comment => Task(id, task, taskType, value, formerTaskId, laterTaskId, exitOn, businessRule, comment)
     }
   }
 

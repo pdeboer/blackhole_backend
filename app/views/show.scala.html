@@ -4,16 +4,41 @@
 
 <h2>Hello @email!</h2><br />
 
-<h3>please select what you like to do:</h3><br />
 
-<a href="/userlist">Show users</a><br />
-<a href="/showjwt">Show JWT</a><br />
-<a href="/tasklist">Show workflow</a><br />
-<a href="/coordinatelist/full">Show Coordinates </a><br />
-<a href="/workset/1">Show Testworkset</a><br />
-<a href="/logout">Logout</a><br />
-
-
+<div class="bs-example" data-example-id="nav-pills-with-dropdown">
+    <ul class="nav nav-pills">
+        <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                Users <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="/userlist">Manage registered users</a></li>
+                <li><a href="/showjwt">Show JWToken of this user</a></li>
+            </ul>
+        </li>
+        <li role="presentation"><a href="/tasklist">Show workflow</a></li>
+        <li role="presentation"><a href="/coordinatelist/full">Show Coordinates</a></li>
+        <li role="presentation"><a href="/commentlist">Rating</a></li>
+        <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                Tasklog <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="/taskloglist/toplist">Show tasklog best rated</a></li>
+                <li><a href="/taskloglist">Show tasklog</a></li>
+            </ul>
+        </li>
+        <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                Manage Worksets of Coordinates <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="/workset/1">Show Testworkset 1</a></li>
+            </ul>
+        </li>
+        <li role="presentation"><a href="/logout">Logout</a></li>
+    </ul>
+</div>
 
 
 

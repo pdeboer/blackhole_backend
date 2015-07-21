@@ -30,7 +30,7 @@ object Comment {
    */
   def findAll(): List[Comment] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from comments").as(Comment.simpleComment *)
+      SQL("SELECT * FROM COMMENTS").as(Comment.simpleComment *)
     }
   }
 

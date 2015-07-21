@@ -10,8 +10,10 @@ POST        /               controllers.Application.submitlogin
 
 
 GET /taskloglist               controllers.Application.taskloglist
+GET /taskloglist/toplist               controllers.Application.taskloglistTop
 GET /tasklist                  controllers.Application.tasklist
 GET         /showjwt                     controllers.Application.showjwt
+GET /commentlist            controllers.Application.commentlist
 
 #Coordinatelist
 GET /coordinatelist/full           controllers.Application.fullcoordinatelist
@@ -35,6 +37,8 @@ GET /tasks                          controllers.Tasks.list
 GET /tasks/:id                   controllers.Tasks.details(id: Int)
 GET /tasks/detailsHtml:id                   controllers.Tasks.detailsHtml(id: Int)
 GET /tasks/getNext/:id                   controllers.Tasks.getNext(id: Int)
+GET /tasks/comment/:id            controllers.Tasks.changeComment(id: Int)
+POST /tasks/updatecomment          controllers.Tasks.updateComment
 
 #Users
 POST        /users/getUuid               controllers.Users.getUuid
