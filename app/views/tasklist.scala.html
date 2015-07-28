@@ -6,41 +6,35 @@
 <table id="tasklogtable" class="table table-striped">
     <thead>
     <tr>
-        <th>id</th>
-        <th>task</th>
-        <th>taskType</th>
-        <th>value</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Value</th>
         <th>formerTaskId</th>
         <th>laterTaskId</th>
-        <th>exitOn</th>
-        <th>example html</th>
+        <th>Exit On</th>
         <th>manage example</th>
     </tr>
     </thead>
     <tfoot>
     <tr>
-        <th>id</th>
-        <th>task</th>
-        <th>taskType</th>
-        <th>value</th>
+        <th>Description</th>
+        <th>Type</th>
+        <th>Value</th>
         <th>formerTaskId</th>
         <th>laterTaskId</th>
-        <th>exitOn</th>
-        <th>example html</th>
+        <th>Exit On</th>
         <th>manage example</th>
     </tr>
     </tfoot>
     <tbody>
     @for(task <- tasks) {
     <tr>
-        <td>@task.id</td>
         <td>@task.task</td>
         <td>@task.taskType</td>
         <td>@task.value</td>
         <td>@task.formerTaskId</td>
         <td>@task.laterTaskId</td>
         <td>@task.exitOn</td>
-        <td>@task.comment</td>
         <td><a href="/tasks/comment/@task.id">change example</a></td>
     </tr>
     }
