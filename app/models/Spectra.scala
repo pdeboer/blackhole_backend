@@ -7,7 +7,7 @@ import anorm.SqlParser._
 import scala.language.postfixOps
 import play.api.Logger
 
-case class Spectra(name: Int, specobjid: Int, ra: BigDecimal, dec: BigDecimal, fiber: Int, plate: Int, mjd: Int, id: Int)
+case class Spectra(name: BigDecimal, specobjid: BigDecimal, ra: BigDecimal, dec: BigDecimal, fiber: Int, plate: Int, mjd: Int, id: Int)
 
 object Spectra {
 
@@ -40,8 +40,8 @@ object Spectra {
      * Spectra structure
      */
     val simpleSpectra = {
-        get[Int]("name") ~
-        get[Int]("specobjid") ~
+        get[BigDecimal]("name") ~
+        get[BigDecimal]("specobjid") ~
         get[BigDecimal]("ra") ~
         get[BigDecimal]("dec") ~
         get[Int]("plate") ~
