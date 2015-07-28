@@ -1,6 +1,6 @@
 package controllers
 
-import models.{User, Task, Coordinate, Tasklog}
+import models.{User, Task, Coordinate, Tasklog, Spectra}
 import play.api.mvc.{Controller, _}
 import play.api.mvc._
 import play.api.libs.json._

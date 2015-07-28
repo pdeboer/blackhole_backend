@@ -40,6 +40,9 @@ GET /tasks/getNext/:id                   controllers.Tasks.getNext(id: Int)
 GET /tasks/comment/:id            controllers.Tasks.changeComment(id: Int)
 POST /tasks/updatecomment          controllers.Tasks.updateComment
 
+# Spectras
+GET /spectras/:name             controllers.Spectras.listByName(name: String)
+
 #Users
 POST        /users/getUuid               controllers.Users.getUuid
 POST        /users/getJWT              controllers.Users.getJWT
