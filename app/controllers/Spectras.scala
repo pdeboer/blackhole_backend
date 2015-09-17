@@ -20,6 +20,7 @@ object Spectras extends Controller {
    */
   def list = Action {
     val allSpectras = Spectra.findAll.map(_.id)
+
     Ok(Json.toJson(allSpectras))
   }
 
@@ -29,9 +30,16 @@ object Spectras extends Controller {
    * @param name Int
    * @return void
    */
-  def listByName(name: String) = Action {
+  def listByName(name: BigDecimal) = Action {
     val allSpectras = Spectra.findByName(name).map(_.specobjid)
-    Ok(Json.toJson(allSpectras))
+/*
+    val returnArray = scala.collection.mutable.Map[Int, String]()
+    val i = 0
+    allSpectras.foreach { spec =>
+      returnArray(i) = spec.toString()
+    }
+    */
+    Ok(Json.toJson(allSpectras(0).toString()))
   }
 
 

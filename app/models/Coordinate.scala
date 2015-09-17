@@ -105,8 +105,6 @@ object Coordinate {
 
   }
 
-
-
   /**
    * Insert Coordinates
    *

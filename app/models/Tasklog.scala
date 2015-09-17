@@ -81,6 +81,22 @@ object Tasklog {
   }
 
 
+  /**
+   *
+   * @param uuid
+   * @return
+   */
+  def getNumberOfSolvedTasks(uuid: String): Int = {
+    DB.withConnection { implicit connection =>
+      val result = SQL("SELECT COUNT(*)-1 as count FROM pplibdataanalyzer.tasklog WHERE `uuid` = {uuid} LIMIT 1")
+        .on('uuid -> uuid)
+        .apply
+        .headOption
+      result.map(row => row[Int]("count")).getOrElse(0)
+    }
+  }
+
+
 
   /**
    * Insert Tasklog

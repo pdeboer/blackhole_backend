@@ -93,7 +93,7 @@ object TaskDaemon extends Controller {
               coordinatesDec = coords.dec
               coorddinatesSdssId = coords.sdss_id
               coordinatesId = coords.id
-            case None => println("Gender: not specified")
+            case None => println("No information")
           }
 
           // Get next question
@@ -113,6 +113,15 @@ object TaskDaemon extends Controller {
           }
 
 
+          // Spectras
+          val listOfSpectras = Spectra.findByName(coorddinatesSdssId)
+
+
+          // Statistics
+          // Get number of solved tasks
+          val solvedTasks = Tasklog.getNumberOfSolvedTasks(uuid)
+          implicit val spectraFormat = Json.format[Spectra]
+
 
 
           val returnObject = Json.toJson(
@@ -126,7 +135,24 @@ object TaskDaemon extends Controller {
                     "answer" -> Json.toJson(taskTyp),
                     "question" -> Json.toJson(task),
                     "question_id" -> Json.toJson(taskId.toString),
-                    "tooltip" -> Json.toJson(taskComment)
+                    "tooltip" -> Json.toJson(taskComment),
+                    "spectras" -> Json.toJson(listOfSpectras)
+                  )
+                )
+              ),
+              "options" -> Seq(
+                Json.toJson(
+                  Map(
+                "is_rated" -> Json.toJson(false),
+                "user_known" -> Json.toJson(false),
+                "persona_info"  -> Json.toJson(false)
+              )
+            )
+          ),
+              "statistics" -> Seq(
+                Json.toJson(
+                  Map(
+                    "completed" -> Json.toJson(solvedTasks)
                   )
                 )
               )

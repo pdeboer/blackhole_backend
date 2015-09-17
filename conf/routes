@@ -41,7 +41,7 @@ GET /tasks/comment/:id            controllers.Tasks.changeComment(id: Int)
 POST /tasks/updatecomment          controllers.Tasks.updateComment
 
 # Spectras
-GET /spectras/:name             controllers.Spectras.listByName(name: String)
+GET /spectras/:name             controllers.Spectras.listByName(name: Int)
 
 #Users
 POST        /users/getUuid               controllers.Users.getUuid

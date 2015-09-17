@@ -28,7 +28,7 @@ object Spectra {
      * @param name
      * @return
      */
-    def findByName(name: String): List[Spectra] = {
+    def findByName(name: BigDecimal): List[Spectra] = {
       DB.withConnection { implicit connection =>
         SQL("select * from spectra WHERE name = {name}").on('name -> name).as(Spectra.simpleSpectra *)
       }
