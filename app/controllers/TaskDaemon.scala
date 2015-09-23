@@ -123,7 +123,6 @@ object TaskDaemon extends Controller {
           implicit val spectraFormat = Json.format[Spectra]
 
 
-
           val returnObject = Json.toJson(
             Map(
               "return" -> Seq(
