@@ -7,6 +7,7 @@ import anorm.SqlParser._
 import scala.language.postfixOps
 
 /**
+ * Case class for Spectras
  *
  * @param name The name of the spectra (sdss_id)
  * @param specobjid The id of the inspection
@@ -24,7 +25,6 @@ case class Spectra(name: BigDecimal, specobjid: String, ra: BigDecimal, dec: Big
  *
  * @author David Pinezich <david.pinezich@uzh.ch>
  * @version 1.0.0
- * @
  */
 object Spectra {
 

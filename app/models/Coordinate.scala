@@ -1,38 +1,37 @@
 package models
 
-import play.api.data.Form
-import play.api.data.Forms._
 import play.api.db._
 import play.api.Play.current
-import anorm._
-import anorm.SqlParser._
 import scala.language.postfixOps
-import play.api.Logger
-
 import anorm._
 import anorm.SqlParser._
 
-import scala.text
 
 /**
-* An entry in Coordinates Lis
+* Case Class for Coordinates
 *
-* @param id Coordinates id
+* @param id Coordinates id to have a definit indentification
 * @param sdss_id Coordinates sdss_id
-* @param ra Coordinates ra
-* @param dec Coordinates dec
-* @param active Coordinates active
+* @param ra Coordinates ra in decimals
+* @param dec Coordinates dec in decimals
+* @param active Coordinates active to shut down coordinates
 */
 case class Coordinate(id: Option[Int], sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal, active: Int)
 
+/**
+ * This Model is used to get data from the coordinates Model
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Coordinate {
 
   /**
-   * Find all Coordinates
+   * Find all Coordinates within a limit and an offset
    *
-   * @param limit
-   * @param offset
-   * @return
+   * @param limit The limit of coordinates which should be given back
+   * @param offset The offset is the counterpair for the limit to set it like LIMIT 0, 1000
+   * @return List[Coordinate] a list of all coordinates within this given range
    */
   def findSome(limit: Int = Coordinate.countCoordinates(), offset: Int = 0): List[Coordinate] = {
     DB.withConnection { implicit connection =>
@@ -40,6 +39,10 @@ object Coordinate {
     }
   }
 
+  /**
+   * Finds all coordinates (full-list), actually a findSome without parametrs offset=0 and limit = count(coordinates)
+   * @return List[Coordinate]
+   */
   def findAll() : List[Coordinate] = {
     findSome()
   }
@@ -47,8 +50,8 @@ object Coordinate {
   /**
    * Find Coordinates by Id
    *
-   * @param id
-   * @return
+   * @param id Coordinate id
+   * @return Option[Coordinate] returns zero or one coordinate which is found by id
    */
   def findById(id: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
@@ -57,10 +60,10 @@ object Coordinate {
   }
 
   /**
-   * Find Coordinates by Id
+   * Find Coordinates by sdss_id
    *
-   * @param sdss_id
-   * @return
+   * @param sdss_id Coordinate sdss_id
+   * @return Option[Coordinate] returns zero or one coordinate which is found by sdss_id
    */
   def findBySdssId(sdss_id: BigDecimal): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
@@ -71,7 +74,7 @@ object Coordinate {
   /**
    * Find Random Coordinates
    *
-   * @return
+   * @return Option[Coordinate] returns zero or one random coordinate
    */
   def findByRand(): Option[Coordinate] = {
   DB.withConnection { implicit connection =>
@@ -80,9 +83,10 @@ object Coordinate {
 }
 
   /**
-   * Find Random Coordinates
+   * Find Random Coordinates within a given Set
+   * => Joins the set
    *
-   * @return
+   * @return Option[Coordinate] returns zero or max one random coordinate within a set
    */
   def findByRandWithSet(): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
@@ -91,9 +95,9 @@ object Coordinate {
   }
 
   /**
-   * Count Coordinates
+   * Count of all Coordinates
    *
-   * @return
+   * @return int Number of coordinates
    */
   def countCoordinates(): Int = {
     DB.withConnection { implicit connection =>
@@ -106,12 +110,12 @@ object Coordinate {
   }
 
   /**
-   * Insert Coordinates
+   * Insert a coordinate
    *
-   * @param sdss_id
-   * @param ra
-   * @param dec
-   * @return
+   * @param sdss_id the given, unique! sdss_id
+   * @param ra Ra number in decimal
+   * @param dec Dec number in decimal
+   * @return int 1 for errorless 0 for with error
    */
   def insertCoordinate(sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal): Int = {
     DB.withConnection( { implicit connection =>
@@ -121,10 +125,10 @@ object Coordinate {
   }
 
   /**
-   * Delete Coordinates
+   * Delete a coordinate by id
    *
-   * @param Id
-   * @return
+   * @param Id id of coordinate to delete
+   * @return int 1 for errorless 0 for with error
    */
   def deleteCoordinate(Id: Int): Int = {
     DB.withConnection( { implicit connection =>
