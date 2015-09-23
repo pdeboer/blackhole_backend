@@ -63,7 +63,6 @@ object Spectra {
     }
   }
 
-
   /**
    * Spectra structure, to be used with [Spectra]
    * The specobjid is a String to make sure it gets correctly to the Rest interface (without rounding)
@@ -77,9 +76,8 @@ object Spectra {
       get[Int]("mjd") ~
       get[Int]("fiber") ~
       get[Int]("id") map {
-      case name ~ specobjid ~ ra ~ dec ~ plate ~ mjd ~ fiber ~ id => Spectra(name, specobjid, ra, dec, plate, mjd, fiber, id)
-    }
+        case name ~ specobjid ~ ra ~ dec ~ plate ~ mjd ~ fiber ~ id => Spectra(name, specobjid, ra, dec, plate, mjd, fiber, id)
+      }
   }
-
 
 }

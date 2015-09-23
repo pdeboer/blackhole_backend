@@ -6,16 +6,15 @@ import scala.language.postfixOps
 import anorm._
 import anorm.SqlParser._
 
-
 /**
-* Case Class for Coordinates
-*
-* @param id Coordinates id to have a definit indentification
-* @param sdss_id Coordinates sdss_id
-* @param ra Coordinates ra in decimals
-* @param dec Coordinates dec in decimals
-* @param active Coordinates active to shut down coordinates
-*/
+ * Case Class for Coordinates
+ *
+ * @param id Coordinates id to have a definit indentification
+ * @param sdss_id Coordinates sdss_id
+ * @param ra Coordinates ra in decimals
+ * @param dec Coordinates dec in decimals
+ * @param active Coordinates active to shut down coordinates
+ */
 case class Coordinate(id: Option[Int], sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal, active: Int)
 
 /**
@@ -43,7 +42,7 @@ object Coordinate {
    * Finds all coordinates (full-list), actually a findSome without parametrs offset=0 and limit = count(coordinates)
    * @return List[Coordinate]
    */
-  def findAll() : List[Coordinate] = {
+  def findAll(): List[Coordinate] = {
     findSome()
   }
 
@@ -77,10 +76,10 @@ object Coordinate {
    * @return Option[Coordinate] returns zero or one random coordinate
    */
   def findByRand(): Option[Coordinate] = {
-  DB.withConnection { implicit connection =>
-    SQL("SELECT * FROM coordinates ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
+    DB.withConnection { implicit connection =>
+      SQL("SELECT * FROM coordinates ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
+    }
   }
-}
 
   /**
    * Find Random Coordinates within a given Set
@@ -118,7 +117,7 @@ object Coordinate {
    * @return int 1 for errorless 0 for with error
    */
   def insertCoordinate(sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal): Int = {
-    DB.withConnection( { implicit connection =>
+    DB.withConnection({ implicit connection =>
       SQL("INSERT INTO coordinates(`sdss_id`, `ra`, `dec`, `active`) VALUES ({sdss_id}, {ra}, {dec}, {active})").on('sdss_id -> sdss_id, 'ra -> ra, 'dec -> dec, 'active -> '1').executeInsert()
     })
     1
@@ -131,7 +130,7 @@ object Coordinate {
    * @return int 1 for errorless 0 for with error
    */
   def deleteCoordinate(Id: Int): Int = {
-    DB.withConnection( { implicit connection =>
+    DB.withConnection({ implicit connection =>
       val result = SQL("DELETE FROM coordinates WHERE `Id` = {id}").on('id -> Id).executeUpdate()
     })
     1
@@ -141,13 +140,13 @@ object Coordinate {
    * Structure for Coordinates
    */
   val simpleCoordinates = {
-    get[Option[Int]]("id")~
-      get[BigDecimal]("sdss_id")~
+    get[Option[Int]]("id") ~
+      get[BigDecimal]("sdss_id") ~
       get[BigDecimal]("ra") ~
       get[BigDecimal]("dec") ~
       get[Int]("active") map {
-      case id~sdss_id~ra~dec~active => Coordinate(id, sdss_id, ra, dec, active)
-    }
+        case id ~ sdss_id ~ ra ~ dec ~ active => Coordinate(id, sdss_id, ra, dec, active)
+      }
   }
 
 }
