@@ -1,43 +1,43 @@
 package controllers
 
-import models.{User, Task, Coordinate, Tasklog, Spectra}
-import play.api.mvc.{Controller, _}
+import models._
+import play.api.mvc.{ Controller, _ }
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.Logger
 
-
 // you need this import to have combinators
 import play.api.libs.functional.syntax._
-
 
 object TaskDaemon extends Controller {
 
   implicit val rds = (
     (__ \ 'jwt).read[String] and
-      (__ \ 'ip).read[String]
-    ) tupled
+    (__ \ 'ip).read[String]) tupled
 
-  def getNext= Action { request =>
+  def getNext = Action { request =>
     request.body.asJson.map { json =>
-      json.validate[(String, String)].map{
+      json.validate[(String, String)].map {
         case (jwt, ip) => {
+
+          val SET = 1
 
           // Standard values for coordinates
           var coordinatesRa: BigDecimal = null
           var coordinatesDec: BigDecimal = null
-          var coorddinatesSdssId: BigDecimal = null
+          var coordinatesSdssId: BigDecimal = null
           var coordinatesId: Option[Int] = null
 
           // Standard values for tasks
           var taskId: Integer = null
           var task: String = null
-          var taskTyp: String  = null
-          var taskValue: Integer  = null
+          var taskTyp: String = null
+          var taskValue: Integer = null
           var taskFormerTaskId: Integer = null
           var taskLaterTaskId: Integer = null
           var taskExitOn: String = null
           var taskComment: String = null
+          var taskPreset: String = null
 
           // Standard for questions
           var questionId: Integer = 1
@@ -58,9 +58,8 @@ object TaskDaemon extends Controller {
           var taskConstraintExitOn = ""
           var taskConstraintLaterTaskId = 0
 
-
           lastEntry match {
-            case None => coordinates = newJob()
+            case None => coordinates = newJob(SET, uuid)
             case entry: Tasklog => {
 
               Task.findById(entry.question_id).map { tConstraint =>
@@ -68,19 +67,20 @@ object TaskDaemon extends Controller {
                 taskConstraintLaterTaskId = tConstraint.laterTaskId
               }
 
-              //Logger.debug(taskConstraintLaterTaskId.toString)
-              //Logger.debug(taskConstraintExitOn)
-              //Logger.debug(entry.answer)
+              if (entry.answer == taskConstraintExitOn || taskConstraintLaterTaskId == 0) {
+                if (entry.answer == taskConstraintExitOn) {
+                  CompletedTaskLog.insertCompletedTasklog(uuid, "halted", entry.sdss_id, 1)
+                } else if (taskConstraintLaterTaskId == 0) {
+                  CompletedTaskLog.insertCompletedTasklog(uuid, "completed", entry.sdss_id, 1)
+                }
 
-              if(entry.answer == taskConstraintExitOn || taskConstraintLaterTaskId == 0) {
-                //Logger.debug("New Job")
-                coordinates = newJob()
-              } else if(entry.answer == "no" && taskConstraintExitOn == "halt") {
-                coordinates = Coordinate.findBySdssId(entry.coordinates_id)
+                coordinates = newJob(SET, uuid)
+              } else if (entry.answer == "no" && taskConstraintExitOn == "halt") {
+                coordinates = Coordinate.findBySdssId(entry.sdss_id)
                 questionId = entry.question_id + 2
               } else {
                 //Logger.debug("old job cont")
-                coordinates = Coordinate.findBySdssId(entry.coordinates_id)
+                coordinates = Coordinate.findBySdssId(entry.sdss_id)
                 questionId = entry.question_id + 1
               }
 
@@ -91,98 +91,88 @@ object TaskDaemon extends Controller {
             case Some(coords) =>
               coordinatesRa = coords.ra
               coordinatesDec = coords.dec
-              coorddinatesSdssId = coords.sdss_id
+              coordinatesSdssId = coords.sdss_id
               coordinatesId = coords.id
-            case None => println("No information")
+
+              // Get next question
+              val nextTask = Task.findById(questionId)
+
+              nextTask match {
+                case Some(nextTask) =>
+                  taskId = nextTask.id
+                  task = nextTask.task
+                  taskTyp = nextTask.taskType
+                  taskValue = nextTask.value
+                  taskFormerTaskId = nextTask.formerTaskId
+                  taskLaterTaskId = nextTask.laterTaskId
+                  taskExitOn = nextTask.exitOn
+                  taskComment = nextTask.comment
+                  taskPreset = nextTask.preset
+                case None => println("No Task")
+              }
+
+              // Spectras
+              val listOfSpectras = Spectra.findByName(coordinatesSdssId)
+
+              // Statistics
+              // Get number of solved tasks
+              val solvedTasks = CompletedTaskLog.getNumberOfCompletedTasks(uuid)
+              implicit val spectraFormat = Json.format[Spectra]
+
+              val isRated: Boolean = Comment.findByUuidAndSdss(uuid, coordinatesSdssId)
+              Logger.debug(uuid.toString() + " :: " + coordinatesSdssId.toString())
+
+              val returnObject = Json.toJson(
+                Map(
+                  "return" -> Seq(
+                    Json.toJson(
+                      Map(
+                        "sdss_id" -> Json.toJson(coordinatesSdssId.toString()),
+                        "ra" -> Json.toJson(coordinatesRa.toString()),
+                        "dec" -> Json.toJson(coordinatesDec.toString()),
+                        "answer" -> Json.toJson(taskTyp),
+                        "question" -> Json.toJson(task),
+                        "question_id" -> Json.toJson(taskId.toString),
+                        "tooltip" -> Json.toJson(taskComment),
+                        "spectras" -> Json.toJson(listOfSpectras)))),
+                  "options" -> Seq(
+                    Json.toJson(
+                      Map(
+                        "is_rated" -> Json.toJson(isRated),
+                        "user_known" -> Json.toJson(false),
+                        "persona_info" -> Json.toJson(false),
+                        "preset" -> Json.toJson(false),
+                        "notification" -> Json.toJson(false)))),
+                  "statistics" -> Seq(
+                    Json.toJson(
+                      Map(
+                        "completed" -> Json.toJson(solvedTasks))))))
+
+              Ok(returnObject)
+
+            case None =>
+              Ok("All tasks are done")
+
           }
-
-          // Get next question
-          val nextTask = Task.findById(questionId)
-
-          nextTask match {
-            case Some(nextTask) =>
-              taskId = nextTask.id
-              task = nextTask.task
-              taskTyp = nextTask.taskType
-              taskValue = nextTask.value
-              taskFormerTaskId = nextTask.formerTaskId
-              taskLaterTaskId = nextTask.laterTaskId
-              taskExitOn = nextTask.exitOn
-              taskComment = nextTask.comment
-            case None => println("No Task")
-          }
-
-
-          // Spectras
-          val listOfSpectras = Spectra.findByName(coorddinatesSdssId)
-
-
-          // Statistics
-          // Get number of solved tasks
-          val solvedTasks = Tasklog.getNumberOfSolvedTasks(uuid)
-          implicit val spectraFormat = Json.format[Spectra]
-
-
-          val returnObject = Json.toJson(
-            Map(
-              "return" -> Seq(
-                Json.toJson(
-                  Map(
-                    "sdss_id" -> Json.toJson(coorddinatesSdssId.toString()),
-                    "ra" -> Json.toJson(coordinatesRa.toString()),
-                    "dec" -> Json.toJson(coordinatesDec.toString()),
-                    "answer" -> Json.toJson(taskTyp),
-                    "question" -> Json.toJson(task),
-                    "question_id" -> Json.toJson(taskId.toString),
-                    "tooltip" -> Json.toJson(taskComment),
-                    "spectras" -> Json.toJson(listOfSpectras)
-                  )
-                )
-              ),
-              "options" -> Seq(
-                Json.toJson(
-                  Map(
-                "is_rated" -> Json.toJson(false),
-                "user_known" -> Json.toJson(false),
-                "persona_info"  -> Json.toJson(false)
-              )
-            )
-          ),
-              "statistics" -> Seq(
-                Json.toJson(
-                  Map(
-                    "completed" -> Json.toJson(solvedTasks)
-                  )
-                )
-              )
-            )
-          )
-
-
-
-          Ok(returnObject)
-
         }
-      }.recoverTotal{
-        e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
+
+      }.recoverTotal {
+        e => BadRequest("Detected error:" + JsError.toFlatJson(e))
       }
     }.getOrElse {
       BadRequest("Expecting Json data")
     }
   }
 
+  def newJob(set: Int, uuid: String): Option[Coordinate] = Option[Coordinate] {
 
+    val coordinates = Coordinate.findByRandWithSetAndUuid(set, uuid)
+    coordinates match {
+      case Some(coords) => return coordinates
+      case None => return None
+    }
 
-
-  def newJob(): Option[Coordinate] =  Option[Coordinate] {
-    return Coordinate.findByRandWithSet()
   }
 
-
-
-
 }
-
-
-
 

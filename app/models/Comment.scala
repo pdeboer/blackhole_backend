@@ -49,6 +49,23 @@ object Comment {
   }
 
   /**
+   * Gives information if there is already a comment given
+   *
+   * @param uuid The uuid of the user
+   * @param sdss_id The sdss_id of the Galaxy
+   */
+  def findByUuidAndSdss(uuid: String, sdss_id: BigDecimal): Boolean = {
+    DB.withConnection { implicit connection =>
+      val rowOption = SQL("SELECT id FROM comments WHERE uuid = {uuid} AND sdss_id = {sdss_id}")
+        .on('uuid -> uuid)
+        .on('sdss_id -> sdss_id)
+        .apply
+        .headOption
+      rowOption.map(row => true).getOrElse(false)
+    }
+  }
+
+  /**
    * Insert Comment with rating
    *
    * @param sdss_id the sdss_id

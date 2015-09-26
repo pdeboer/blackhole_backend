@@ -7,6 +7,7 @@
     <thead>
     <tr>
         <th>SDSS Id</th>
+        <th>Uuid</th>
         <th>Set</th>
         <th>Rating</th>
         <th>Comment</th>
@@ -15,6 +16,7 @@
     <tfoot>
     <tr>
         <th>SDSS Id</th>
+        <th>Uuid</th>
         <th>Set</th>
         <th>Rating</th>
         <th>Comment</th>
@@ -24,6 +26,7 @@
     @for(comment <- comments) {
     <tr>
         <td>@comment.sdss_id</td>
+        <td>@comment.uuid</td>
         <td>@comment.set_id</td>
         <td>@comment.rating</td>
         <td>@comment.comment</td>

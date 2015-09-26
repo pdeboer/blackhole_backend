@@ -10,21 +10,21 @@ import anorm.SqlParser._
  * An entry in the Tasklog list
  *
  * @param uuid Tasklog The uuid of the task
- * @param coordinates_id Tasklog coordinates_id
+ * @param sdss_id Tasklog sdss_id
  * @param question_id Tasklog question
  * @param answer Tasklog answer
  * @param ip Tasklog ip
  */
-case class Tasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String)
+case class Tasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, answer: String, ip: String)
 
 /**
  * A rated entry in the tasklog (comment)
  * @param rating
  * @param uuid
  * @param ip
- * @param coordinates_id
+ * @param sdss_id
  */
-case class ratedTasklog(rating: Int, uuid: String, ip: String, coordinates_id: BigDecimal)
+case class ratedTasklog(rating: Int, uuid: String, ip: String, sdss_id: BigDecimal)
 
 /**
  * This Model is used to get data from the Tasklogmodel
@@ -41,7 +41,7 @@ object Tasklog {
    */
   def findAll(): List[Tasklog] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT uuid, coordinates_id, question_id, answer, timestamp, ip from tasklog").as(Tasklog.simpleTasklog *)
+      SQL("SELECT uuid, sdss_id, question_id, answer, timestamp, ip from tasklog").as(Tasklog.simpleTasklog *)
     }
   }
 
@@ -76,7 +76,7 @@ object Tasklog {
    */
   def findbestRated(): List[ratedTasklog] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT SUM(IF(tasklog.answer = 'yes', tasks.value, 0)) AS rating, uuid, ip, coordinates_id FROM pplibdataanalyzer.tasklog INNER JOIN tasks ON tasks.id = question_id GROUP BY coordinates_id ORDER BY rating DESC").as(Tasklog.ratedTasklist *)
+      SQL("SELECT SUM(IF(tasklog.answer = 'yes', tasks.value, 0)) AS rating, uuid, ip, sdss_id FROM pplibdataanalyzer.tasklog INNER JOIN tasks ON tasks.id = question_id GROUP BY sdss_id ORDER BY rating DESC").as(Tasklog.ratedTasklist *)
     }
   }
 
@@ -100,17 +100,17 @@ object Tasklog {
    * Insert Tasklog
    *
    * @param uuid The uuid of the user
-   * @param coordinates_id The coordinates id (sdss_id)
+   * @param sdss_id The sdss id (sdss_id)
    * @param question_id The question id
    * @param answer The answer given (yes / no)
    * @param ip The logged ip
    * @return Option[Long] The id of the insert
    */
-  def insertTasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String): Option[Long] = {
+  def insertTasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, answer: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
-      SQL("INSERT INTO tasklog(`uuid`, `coordinates_id`, `question_id`, `answer`, `ip`) VALUES ({uuid}, {coordinates_id}, {question_id}, {answer}, {ip})")
+      SQL("INSERT INTO tasklog(`uuid`, `sdss_id`, `question_id`, `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {answer}, {ip})")
         .on('uuid -> uuid)
-        .on('coordinates_id -> coordinates_id)
+        .on('sdss_id -> sdss_id)
         .on('question_id -> question_id)
         .on('answer -> answer)
         .on('ip -> ip)
@@ -124,11 +124,11 @@ object Tasklog {
    */
   val simpleTasklog = {
     get[String]("uuid") ~ // get[Option[Int]]
-      get[BigDecimal]("coordinates_id") ~
+      get[BigDecimal]("sdss_id") ~
       get[Int]("question_id") ~
       get[String]("answer") ~
       get[String]("ip") map {
-        case uuid ~ coordinates_id ~ question_id ~ answer ~ ip => Tasklog(uuid, coordinates_id, question_id, answer, ip)
+        case uuid ~ sdss_id ~ question_id ~ answer ~ ip => Tasklog(uuid, sdss_id, question_id, answer, ip)
       }
   }
 
@@ -139,8 +139,8 @@ object Tasklog {
     get[Int]("rating") ~ // get[Option[Int]]
       get[String]("uuid") ~
       get[String]("ip") ~
-      get[BigDecimal]("coordinates_id") map {
-        case rating ~ uuid ~ ip ~ coordinates_id => ratedTasklog(rating, uuid, ip, coordinates_id)
+      get[BigDecimal]("sdss_id") map {
+        case rating ~ uuid ~ ip ~ sdss_id => ratedTasklog(rating, uuid, ip, sdss_id)
       }
   }
 

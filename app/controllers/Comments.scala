@@ -1,7 +1,7 @@
 package controllers
 
 import controllers.Tasklogs._
-import models.Comment
+import models.{Comment, User}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -52,8 +52,9 @@ object Comments extends Controller {
     try {
       val commentJson = request.body
       val comment = commentJson.as[Comment]
+
      // Logger.debug(comment.sdss_id.toString + " " + comment.set_id.toString + " " + comment.rating.toString + " " + comment.comment + " " + comment.ip)
-      val id = Comment.insertComment(comment.sdss_id, comment.uuid, comment.set_id, comment.rating, comment.comment, comment.ip)
+      val id = Comment.insertComment(comment.sdss_id, User.getUuidByEncryptedString(comment.uuid), comment.set_id, comment.rating, comment.comment, comment.ip)
       Ok(id.get.toString())
     }
     catch {

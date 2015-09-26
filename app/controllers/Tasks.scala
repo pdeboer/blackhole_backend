@@ -55,7 +55,8 @@ object Tasks extends Controller {
       "laterTaskId" -> Json.toJson(t.laterTaskId),
       "exitOn" -> Json.toJson(t.exitOn),
       "businessRule" -> Json.toJson(t.businessRule),
-      "comment" -> Json.toJson(t.comment)
+      "comment" -> Json.toJson(t.comment),
+      "preset" -> Json.toJson(t.preset)
     )
   }
 
@@ -121,7 +122,8 @@ object Tasks extends Controller {
       (JsPath \ "laterTaskId").read[Int] and
       (JsPath \ "exitOn").read[String] and
       (JsPath \ "businessRule").read[String] and
-      (JsPath \ "comment").read[String]
+      (JsPath \ "comment").read[String] and
+      (JsPath \ "preset").read[String]
     )(Task.apply _)
 
 }

@@ -18,7 +18,7 @@ import anorm.SqlParser._
  * @param businessRule Taks Is there a given business rule
  * @param comment Task The task comment, to have as a description for the task
  */
-case class Task(id: Int, task: String, taskType: String, value: Int, formerTaskId: Int, laterTaskId: Int, exitOn: String, businessRule: String, comment: String)
+case class Task(id: Int, task: String, taskType: String, value: Int, formerTaskId: Int, laterTaskId: Int, exitOn: String, businessRule: String, comment: String, preset: String)
 
 /**
  * This Model is used to get data from the Taskmodel
@@ -80,8 +80,9 @@ object Task {
       get[Int]("laterTaskId") ~
       get[String]("exitOn") ~
       get[String]("businessRule") ~
-      get[String]("comment") map {
-        case id ~ task ~ taskType ~ value ~ formerTaskId ~ laterTaskId ~ exitOn ~ businessRule ~ comment => Task(id, task, taskType, value, formerTaskId, laterTaskId, exitOn, businessRule, comment)
+      get[String]("comment") ~
+      get[String]("preset") map {
+        case id ~ task ~ taskType ~ value ~ formerTaskId ~ laterTaskId ~ exitOn ~ businessRule ~ comment ~ preset => Task(id, task, taskType, value, formerTaskId, laterTaskId, exitOn, businessRule, comment, preset)
       }
   }
 

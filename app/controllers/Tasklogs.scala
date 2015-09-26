@@ -26,7 +26,7 @@ object Tasklogs extends Controller {
   implicit object tasklogWrites extends Writes[Tasklog] {
     def writes(t: Tasklog) = Json.obj(
       "uuid" -> Json.toJson(t.uuid),
-      "coordinates_id" -> Json.toJson(t.coordinates_id),
+      "sdss_id" -> Json.toJson(t.sdss_id),
       "question_id" -> Json.toJson(t.question_id),
       "answer" -> Json.toJson(t.answer),
       "ip" -> Json.toJson(t.ip)
@@ -50,7 +50,7 @@ object Tasklogs extends Controller {
    */
   implicit val tasklogReads: Reads[Tasklog] = (
       (JsPath \ "uuid").read[String] and
-        (JsPath \ "coordinates_id").read[BigDecimal] and
+        (JsPath \ "sdss_id").read[BigDecimal] and
       (JsPath \ "question_id").read[Int] and
       (JsPath \ "answer").read[String] and
         (JsPath \ "ip").read[String]
@@ -63,11 +63,7 @@ object Tasklogs extends Controller {
       val tasklogJson = request.body
       val log = tasklogJson.as[Tasklog] //@todo set id as optional //@todo rename uuid with jwt
 
-      val jwTokenDecode = User.decodeJWT(log.uuid)
-      val email = jwTokenDecode.value("email").toString.replace("\"", "")
-      val uuid = User.getUuidByEmail(email)
-
-      val id = Tasklog.insertTasklog(uuid, log.coordinates_id, log.question_id, log.answer, log.ip)
+      val id = Tasklog.insertTasklog(User.getUuidByEncryptedString(log.uuid), log.sdss_id, log.question_id, log.answer, log.ip)
       Ok(id.get.toString())
     }
     catch {

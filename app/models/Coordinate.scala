@@ -87,9 +87,34 @@ object Coordinate {
    *
    * @return Option[Coordinate] returns zero or max one random coordinate within a set
    */
-  def findByRandWithSet(): Option[Coordinate] = {
+  def findByRandWithSet(set: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT coordinates.Id, coordinates.sdss_id, coordinates.ra, coordinates.dec, coordinates.active FROM coordinates INNER JOIN coordinatesToSet ON coordinates.id = coordinatesToSet.coordinates_id INNER JOIN pplibdataanalyzer.set ON coordinatesToSet.set_id = pplibdataanalyzer.set.id WHERE pplibdataanalyzer.set.id = 1 ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
+      SQL("SELECT coordinates.Id, coordinates.sdss_id, coordinates.ra, coordinates.dec, coordinates.active " +
+        "FROM coordinates INNER JOIN coordinatesToSet ON coordinates.id = coordinatesToSet.coordinates_id " +
+        "INNER JOIN pplibdataanalyzer.set ON coordinatesToSet.set_id = pplibdataanalyzer.set.id " +
+        "WHERE pplibdataanalyzer.set.id = {id} ORDER BY RAND() LIMIT 1")
+    .on('set -> set)
+        .as(Coordinate.simpleCoordinates.singleOpt)
+    }
+  }
+
+  /**
+   * Find Random Coordinates within a given Set
+   * => Joins the set
+   *
+   * @return Option[Coordinate] returns zero or max one random coordinate within a set
+   */
+  def findByRandWithSetAndUuid(set: Int, uuid: String): Option[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT coordinates.Id, coordinates.sdss_id, coordinates.ra, coordinates.dec, coordinates.active " +
+        "FROM coordinates INNER JOIN coordinatesToSet ON coordinates.id = coordinatesToSet.coordinates_id " +
+        "INNER JOIN pplibdataanalyzer.set ON coordinatesToSet.set_id = pplibdataanalyzer.set.id " +
+        "WHERE pplibdataanalyzer.set.id = {set} " +
+        "AND coordinates.sdss_id NOT IN (SELECT sdss_id FROM pplibdataanalyzer.completedTaskLog WHERE uuid = {uuid}) " +
+        "ORDER BY RAND() LIMIT 1")
+        .on('set -> set)
+        .on('uuid -> uuid)
+        .as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
 
