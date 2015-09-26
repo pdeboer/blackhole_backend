@@ -59,7 +59,7 @@ object Comment {
    * @return The id of the insertion if everything is ok
    */
   def insertComment(sdss_id: BigDecimal, uuid: String, set_id: Int, rating: Int, comment: String, ip: String): Option[Long] = {
-    Logger.debug(sdss_id.toString + " " + set_id.toString + " " + rating.toString + " " + comment + " " + ip)
+    // Logger.debug(sdss_id.toString + " " + set_id.toString + " " + rating.toString + " " + comment + " " + ip)
     val id: Option[Long] = DB.withConnection { implicit connection =>
       SQL("INSERT INTO comments(`sdss_id`, `uuid`, `set_id`, `rating`, `comment`, `ip`) VALUES ({sdss_id}, {uuid}, {set_id}, {rating}, {comment}, {ip})")
         .on('sdss_id -> sdss_id)
