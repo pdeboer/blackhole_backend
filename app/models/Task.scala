@@ -5,6 +5,7 @@ import scala.language.postfixOps
 
 import anorm._
 import anorm.SqlParser._
+
 /**
  * An entry in the Task list
  *
@@ -20,7 +21,10 @@ import anorm.SqlParser._
 case class Task(id: Int, task: String, taskType: String, value: Int, formerTaskId: Int, laterTaskId: Int, exitOn: String, businessRule: String, comment: String)
 
 /**
- * Task data access
+ * This Model is used to get data from the Taskmodel
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
  */
 object Task {
 

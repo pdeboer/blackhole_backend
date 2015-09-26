@@ -16,8 +16,12 @@ import anorm.SqlParser._
  * @param ip Comment ip
  */
 case class Comment(sdss_id: BigDecimal, uuid: String, set_id: Int, rating: Int, comment: String, ip: String)
+
 /**
- * Task data access
+ * This Model is used to get data from the Commentmodel
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
  */
 object Comment {
 

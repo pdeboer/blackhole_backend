@@ -18,7 +18,7 @@ import anorm.SqlParser._
 case class Coordinate(id: Option[Int], sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal, active: Int)
 
 /**
- * This Model is used to get data from the coordinates Model
+ * This Model is used to get data from the Coordinatesmodel
  *
  * @author David Pinezich <david.pinezich@uzh.ch>
  * @version 1.0.0

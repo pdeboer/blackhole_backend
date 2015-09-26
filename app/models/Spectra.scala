@@ -21,7 +21,7 @@ import scala.language.postfixOps
 case class Spectra(name: BigDecimal, specobjid: String, ra: BigDecimal, dec: BigDecimal, fiber: Int, plate: Int, mjd: Int, id: Int)
 
 /**
- * This Model is used to get data from the spectra model
+ * This Model is used to get data from the Spectramodel
  *
  * @author David Pinezich <david.pinezich@uzh.ch>
  * @version 1.0.0

@@ -16,7 +16,10 @@ import anorm.SqlParser._
 case class Workset(id: Int, coordinates_id: Int, set_id: Int)
 
 /**
- * Workset access
+ * This Model is used to get data from the worksetmodel
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
  */
 object Workset {
 

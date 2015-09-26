@@ -27,7 +27,10 @@ case class Tasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, a
 case class ratedTasklog(rating: Int, uuid: String, ip: String, coordinates_id: BigDecimal)
 
 /**
- * The TaskLog object
+ * This Model is used to get data from the Tasklogmodel
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
  */
 object Tasklog {
 

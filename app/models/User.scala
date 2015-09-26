@@ -22,7 +22,10 @@ import play.api.libs.json.Json
 case class User(email: String, firstname: String, lastname: String, roleId: Int, active: Int, password: String, uuid: String)
 
 /**
- * The User object which stores/gets the information about the User
+ * This Model is used to get data from the Usermodel
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
  */
 object User {
 
