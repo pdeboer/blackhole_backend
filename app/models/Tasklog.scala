@@ -1,42 +1,40 @@
 package models
+
 import play.api.db._
 import play.api.Play.current
-import anorm._
-import anorm.SqlParser._
 import scala.language.postfixOps
-import play.api.Logger
-
 import anorm._
 import anorm.SqlParser._
+
 /**
  * An entry in the Tasklog list
  *
- * @param uuid Tasklog uuid
+ * @param uuid Tasklog The uuid of the task
  * @param coordinates_id Tasklog coordinates_id
- * @param question Tasklog question
+ * @param question_id Tasklog question
  * @param answer Tasklog answer
  * @param ip Tasklog ip
  */
 case class Tasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String)
 
-
 /**
- * An entry in the Tasklog list
- *
- * @param uuid Tasklog uuid
- * @param coordinates_id Tasklog coordinates_id
- * @param question Tasklog question
- * @param answer Tasklog answer
- * @param ip Tasklog ip
+ * A rated entry in the tasklog (comment)
+ * @param rating
+ * @param uuid
+ * @param ip
+ * @param coordinates_id
  */
 case class ratedTasklog(rating: Int, uuid: String, ip: String, coordinates_id: BigDecimal)
 
+/**
+ * The TaskLog object
+ */
 object Tasklog {
 
   /**
    * Find all Tasklogs
    *
-   * @return
+   * @return List[Tasklog] Lists all Tasklogs
    */
   def findAll(): List[Tasklog] = {
     DB.withConnection { implicit connection =>
@@ -45,10 +43,10 @@ object Tasklog {
   }
 
   /**
-   * Find tasklog piece by id
+   * Find all tasklogs by a given uuid
    *
-   * @param uuid
-   * @return
+   * @param uuid The uuid of the user
+   * @return Option[Tasklog] Gives back zero or more tasklogs for a certain uuid
    */
   def findById(uuid: Int): Option[Tasklog] = {
     DB.withConnection { implicit connection =>
@@ -57,10 +55,10 @@ object Tasklog {
   }
 
   /**
-   * Find tasklog piece by id
+   * Find the last tasklog entry of an user by uuid
    *
-   * @param uuid
-   * @return
+   * @param uuid The uuid of the user
+   * @return Option[Tasklog] Gives back zero or the tasklog for a certain uuid
    */
   def findLastLogEntry(uuid: String): Option[Tasklog] = {
     DB.withConnection { implicit connection =>
@@ -69,10 +67,9 @@ object Tasklog {
   }
 
   /**
-   * Find best rated
+   * Find best rated galaxy and their task
    *
-   * @param uuid
-   * @return
+   * @return List[ratedTasklog]
    */
   def findbestRated(): List[ratedTasklog] = {
     DB.withConnection { implicit connection =>
@@ -80,11 +77,11 @@ object Tasklog {
     }
   }
 
-
   /**
+   * Gets the number of solved tasks by uuid
    *
-   * @param uuid
-   * @return
+   * @param uuid The uuid of the user
+   * @return Int the number of solved tasks
    */
   def getNumberOfSolvedTasks(uuid: String): Int = {
     DB.withConnection { implicit connection =>
@@ -96,17 +93,15 @@ object Tasklog {
     }
   }
 
-
-
   /**
    * Insert Tasklog
    *
-   * @param uuid
-   * @param coordinates_id
-   * @param question_id
-   * @param answer
-   * @param ip
-   * @return
+   * @param uuid The uuid of the user
+   * @param coordinates_id The coordinates id (sdss_id)
+   * @param question_id The question id
+   * @param answer The answer given (yes / no)
+   * @param ip The logged ip
+   * @return Option[Long] The id of the insert
    */
   def insertTasklog(uuid: String, coordinates_id: BigDecimal, question_id: Int, answer: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
@@ -125,22 +120,25 @@ object Tasklog {
    * Tasklog struct
    */
   val simpleTasklog = {
-      get[String]("uuid") ~ // get[Option[Int]]
-        get[BigDecimal]("coordinates_id") ~
-        get[Int]("question_id") ~
+    get[String]("uuid") ~ // get[Option[Int]]
+      get[BigDecimal]("coordinates_id") ~
+      get[Int]("question_id") ~
       get[String]("answer") ~
-        get[String]("ip") map {
-      case uuid~coordinates_id~question_id~answer~ip => Tasklog(uuid, coordinates_id, question_id, answer, ip)
-    }
+      get[String]("ip") map {
+        case uuid ~ coordinates_id ~ question_id ~ answer ~ ip => Tasklog(uuid, coordinates_id, question_id, answer, ip)
+      }
   }
 
+  /**
+   * rated Tasklog struct
+   */
   val ratedTasklist = {
     get[Int]("rating") ~ // get[Option[Int]]
       get[String]("uuid") ~
       get[String]("ip") ~
       get[BigDecimal]("coordinates_id") map {
-      case rating~uuid~ip~coordinates_id => ratedTasklog(rating, uuid, ip, coordinates_id)
-    }
+        case rating ~ uuid ~ ip ~ coordinates_id => ratedTasklog(rating, uuid, ip, coordinates_id)
+      }
   }
 
 }
