@@ -1,15 +1,10 @@
 package controllers
 
-import models.User
-import play.api.Logger
-import play.api.data._
+import models.{User, UserRegister}
 import play.api.data.Forms._
+import play.api.data._
 import play.api.libs.functional.syntax._
-import play.api.libs.json._
-
-import io.really.jwt._
-import play.api.libs.json.Json
-
+import play.api.libs.json.{Json, _}
 import play.api.mvc.{Controller, _}
 
 object Users extends Controller {
@@ -25,6 +20,16 @@ object Users extends Controller {
       "password" -> nonEmptyText,
       "uuid" -> nonEmptyText
     )(User.apply)(User.unapply)
+  )
+
+  // User Form
+  val userFormRegister = Form(
+    mapping(
+      "email" -> nonEmptyText,
+      "lastname" -> nonEmptyText,
+      "firstname" -> nonEmptyText,
+      "password" -> nonEmptyText
+    )(UserRegister.apply)(UserRegister.unapply)
   )
 
   /**
@@ -88,15 +93,35 @@ object Users extends Controller {
    * @return void
    */
   def insertUser = Action { implicit request =>
-    val flash = play.api.mvc.Flash(Map("error" -> "User was not inserted"))
+      val flash = play.api.mvc.Flash(Map("error" -> "User was not inserted"))
       userForm.bindFromRequest().fold(
-      formWithErrors => BadRequest(views.html.userlist.render(User.findAll(), flash)),
+        formWithErrors => BadRequest(views.html.userlist.render(User.findAll(), flash)),
+        tempUser => {
+          val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, tempUser.roleId, tempUser.password)
+          val flash = play.api.mvc.Flash(Map(
+            "success" -> "User was succesfully inserted"
+          ))
+          Ok(views.html.userlist.render(User.findAll(), flash))
+        })
+
+    }
+
+
+  /**
+   * Inserts an User from frontend
+   *
+   * @return void
+   */
+  def insertUserRegister = Action { implicit request =>
+    userFormRegister.bindFromRequest().fold(
+      formWithErrors => BadRequest("failed"),
       tempUser => {
-        val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, tempUser.roleId, tempUser.password)
-        val flash = play.api.mvc.Flash(Map(
-          "success" -> "User was succesfully inserted"
-        ))
-        Ok(views.html.userlist.render(User.findAll(), flash))
+        if(User.getUuidByEmail(tempUser.email) != "") {
+          Ok("exists already")
+        } else {
+          val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, 1, tempUser.password)
+          Ok(User.getJWT(tempUser.email, tempUser.password))
+        }
       })
 
   }
@@ -105,8 +130,8 @@ object Users extends Controller {
   /**
    * Delete an User
    *
-   * @param email
-   * @return void
+   * @param email The email of the user
+   * @return void Gives back the rendered userlist
    */
   def deleteUser(email: String) = Action { implicit request =>
     val result = User.deleteUser(email)

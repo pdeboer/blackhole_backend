@@ -1,10 +1,11 @@
 package models
 
-import play.api.db._
-import play.api.Play.current
-import scala.language.postfixOps
-import anorm._
 import anorm.SqlParser._
+import anorm._
+import play.api.Play.current
+import play.api.db._
+
+import scala.language.postfixOps
 
 /**
  * Case Class for Coordinates
@@ -34,7 +35,9 @@ object Coordinate {
    */
   def findSome(limit: Int = Coordinate.countCoordinates(), offset: Int = 0): List[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT `Id`, `sdss_id`, `ra`, `dec`, `active` FROM coordinates LIMIT {limit} OFFSET {offset}").on('limit -> limit, 'offset -> offset).as(Coordinate.simpleCoordinates *)
+      SQL("SELECT `Id`, `sdss_id`, `ra`, `dec`, `active` FROM coordinates LIMIT {limit} OFFSET {offset}")
+        .on('limit -> limit, 'offset -> offset)
+        .as(Coordinate.simpleCoordinates *)
     }
   }
 
@@ -54,7 +57,9 @@ object Coordinate {
    */
   def findById(id: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * FROM coordinates WHERE id = {id} LIMIT 1").on('id -> id).as(Coordinate.simpleCoordinates.singleOpt)
+      SQL("SELECT * FROM coordinates WHERE id = {id} LIMIT 1")
+        .on('id -> id)
+        .as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
 
@@ -66,7 +71,9 @@ object Coordinate {
    */
   def findBySdssId(sdss_id: BigDecimal): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * FROM coordinates WHERE sdss_id = {sdss_id}").on('sdss_id -> sdss_id).as(Coordinate.simpleCoordinates.singleOpt)
+      SQL("SELECT * FROM coordinates WHERE sdss_id = {sdss_id}")
+        .on('sdss_id -> sdss_id)
+        .as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
 
@@ -77,7 +84,8 @@ object Coordinate {
    */
   def findByRand(): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * FROM coordinates ORDER BY RAND() LIMIT 1").as(Coordinate.simpleCoordinates.singleOpt)
+      SQL("SELECT * FROM coordinates ORDER BY RAND() LIMIT 1")
+        .as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
 
@@ -91,9 +99,9 @@ object Coordinate {
     DB.withConnection { implicit connection =>
       SQL("SELECT coordinates.Id, coordinates.sdss_id, coordinates.ra, coordinates.dec, coordinates.active " +
         "FROM coordinates INNER JOIN coordinatesToSet ON coordinates.id = coordinatesToSet.coordinates_id " +
-        "INNER JOIN pplibdataanalyzer.set ON coordinatesToSet.set_id = pplibdataanalyzer.set.id " +
-        "WHERE pplibdataanalyzer.set.id = {id} ORDER BY RAND() LIMIT 1")
-    .on('set -> set)
+        "INNER JOIN sets ON coordinatesToSet.set_id = sets.id " +
+        "WHERE sets.id = {id} ORDER BY RAND() LIMIT 1")
+        .on('set -> set)
         .as(Coordinate.simpleCoordinates.singleOpt)
     }
   }
@@ -108,9 +116,9 @@ object Coordinate {
     DB.withConnection { implicit connection =>
       SQL("SELECT coordinates.Id, coordinates.sdss_id, coordinates.ra, coordinates.dec, coordinates.active " +
         "FROM coordinates INNER JOIN coordinatesToSet ON coordinates.id = coordinatesToSet.coordinates_id " +
-        "INNER JOIN pplibdataanalyzer.set ON coordinatesToSet.set_id = pplibdataanalyzer.set.id " +
-        "WHERE pplibdataanalyzer.set.id = {set} " +
-        "AND coordinates.sdss_id NOT IN (SELECT sdss_id FROM pplibdataanalyzer.completedTaskLog WHERE uuid = {uuid}) " +
+        "INNER JOIN sets ON coordinatesToSet.set_id = sets.id " +
+        "WHERE sets.id = {set} " +
+        "AND coordinates.sdss_id NOT IN (SELECT sdss_id FROM completedTaskLog WHERE uuid = {uuid}) " +
         "ORDER BY RAND() LIMIT 1")
         .on('set -> set)
         .on('uuid -> uuid)
@@ -134,6 +142,54 @@ object Coordinate {
   }
 
   /**
+   * Checks if there is a spectra for a given coordinate
+   *
+   * @param sdss_id The sdss_id of the coordinate
+   * @return Boolean value if the coordinate has a spectra
+   */
+  def coordinateHasSpectra(sdss_id: BigDecimal): Boolean = {
+    DB.withConnection({ implicit connection =>
+      val rowOption = SQL("SELECT coordinates.sdss_id FROM coordinates INNER JOIN spectra ON spectra.name = coordinates.sdss_id WHERE coordinates.sdss_id = {sdss_id}")
+        .on('sdss_id -> sdss_id)
+        .apply
+        .headOption
+        rowOption.map(row => true).getOrElse(false)
+    })
+  }
+
+  /**
+   * Checks if there is a radio for a given coordinate
+   *
+   * @param sdss_id The sdss_id of the coordinate
+   * @return Boolean value if the coordinate has a radio
+   */
+  def coordinateHasRadio(sdss_id: BigDecimal): Boolean = {
+    DB.withConnection({ implicit connection =>
+      val rowOption = SQL("SELECT coordinates.sdss_id FROM coordinates INNER JOIN radio ON radio.sdss_id = coordinates.sdss_id WHERE coordinates.sdss_id = {sdss_id}")
+        .on('sdss_id -> sdss_id)
+        .apply
+        .headOption
+      rowOption.map(row => true).getOrElse(false)
+    })
+  }
+
+  /**
+   * Checks if there is an xray for a given coordinate
+   *
+   * @param sdss_id The sdss_id of the coordinate
+   * @return Boolean value if the coordinate has a xray
+   */
+  def coordinateHasXray(sdss_id: BigDecimal): Boolean = {
+    DB.withConnection({ implicit connection =>
+      val rowOption = SQL("SELECT coordinates.sdss_id FROM coordinates INNER JOIN xray ON xray.sdss_id = coordinates.sdss_id WHERE coordinates.sdss_id = {sdss_id}")
+        .on('sdss_id -> sdss_id)
+        .apply
+        .headOption
+      rowOption.map(row => true).getOrElse(false)
+    })
+  }
+
+  /**
    * Insert a coordinate
    *
    * @param sdss_id the given, unique! sdss_id
@@ -143,10 +199,15 @@ object Coordinate {
    */
   def insertCoordinate(sdss_id: BigDecimal, ra: BigDecimal, dec: BigDecimal): Int = {
     DB.withConnection({ implicit connection =>
-      SQL("INSERT INTO coordinates(`sdss_id`, `ra`, `dec`, `active`) VALUES ({sdss_id}, {ra}, {dec}, {active})").on('sdss_id -> sdss_id, 'ra -> ra, 'dec -> dec, 'active -> '1').executeInsert()
+      SQL("INSERT INTO coordinates(`sdss_id`, `ra`, `dec`, `active`) VALUES ({sdss_id}, {ra}, {dec}, {active})")
+        .on('sdss_id -> sdss_id, 'ra -> ra, 'dec -> dec, 'active -> '1')
+        .executeInsert()
     })
     1
   }
+
+
+
 
   /**
    * Delete a coordinate by id
@@ -156,7 +217,8 @@ object Coordinate {
    */
   def deleteCoordinate(Id: Int): Int = {
     DB.withConnection({ implicit connection =>
-      val result = SQL("DELETE FROM coordinates WHERE `Id` = {id}").on('id -> Id).executeUpdate()
+      val result = SQL("DELETE FROM coordinates WHERE `Id` = {id}")
+        .on('id -> Id).executeUpdate()
     })
     1
   }

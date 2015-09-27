@@ -1,13 +1,8 @@
 package controllers
 
-import controllers.Application._
 import models.Spectra
-import play.api.Logger
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
-import play.api.data._
-import play.api.data.Forms._
 
 
 object Spectras extends Controller {
@@ -27,10 +22,10 @@ object Spectras extends Controller {
   /**
    * Returns details of the spectra Json formatted
    *
-   * @param name Int
+   * @param name String A String to ensure the transformation is done right
    * @return void
    */
-  def listByName(name: BigDecimal) = Action {
+  def listByName(name: String) = Action {
     val allSpectras = Spectra.findByName(name).map(_.specobjid)
 /*
     val returnArray = scala.collection.mutable.Map[Int, String]()
@@ -39,7 +34,7 @@ object Spectras extends Controller {
       returnArray(i) = spec.toString()
     }
     */
-    Ok(Json.toJson(allSpectras(0).toString()))
+    Ok(Json.toJson(allSpectras.head.toString()))
   }
 
 

@@ -1,9 +1,10 @@
 package models
 
-import play.api.db._
-import play.api.Play.current
-import anorm._
 import anorm.SqlParser._
+import anorm._
+import play.api.Play.current
+import play.api.db._
+
 import scala.language.postfixOps
 
 /**
@@ -18,7 +19,7 @@ import scala.language.postfixOps
  * @param mjd The mjd number (modified julian date)
  * @param id Unique indexing number
  */
-case class Spectra(name: BigDecimal, specobjid: String, ra: BigDecimal, dec: BigDecimal, fiber: Int, plate: Int, mjd: Int, id: Int)
+case class Spectra(name: String, specobjid: String, ra: BigDecimal, dec: BigDecimal, fiber: Int, plate: Int, mjd: Int, id: Int)
 
 /**
  * This Model is used to get data from the Spectramodel
@@ -45,7 +46,7 @@ object Spectra {
    * @param name The name of the Spectra database is actually the sdss_id to match it with the coordinates table
    * @return List[Spectra] Returns a list of Spectras 0-n with the given name
    */
-  def findByName(name: BigDecimal): List[Spectra] = {
+  def findByName(name: String): List[Spectra] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT * FROM spectra WHERE name = {name}").on('name -> name).as(Spectra.simpleSpectra *)
     }
@@ -68,7 +69,7 @@ object Spectra {
    * The specobjid is a String to make sure it gets correctly to the Rest interface (without rounding)
    */
   val simpleSpectra = {
-    get[BigDecimal]("name") ~
+    get[String]("name") ~
       get[String]("specobjid") ~
       get[BigDecimal]("ra") ~
       get[BigDecimal]("dec") ~

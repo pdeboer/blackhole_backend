@@ -1,10 +1,9 @@
 package controllers
 
 import models._
-import play.api.mvc.{ Controller, _ }
-import play.api.mvc._
-import play.api.libs.json._
 import play.api.Logger
+import play.api.libs.json._
+import play.api.mvc.{Controller, _}
 
 // you need this import to have combinators
 import play.api.libs.functional.syntax._
@@ -18,9 +17,9 @@ object TaskDaemon extends Controller {
   def getNext = Action { request =>
     request.body.asJson.map { json =>
       json.validate[(String, String)].map {
-        case (jwt, ip) => {
+        case (jwt, ip) =>
 
-          val SET = 1
+          val SET = Set.findActiveSet()
 
           // Standard values for coordinates
           var coordinatesRa: BigDecimal = null
@@ -57,14 +56,48 @@ object TaskDaemon extends Controller {
           var taskConstraint: Option[Task] = null
           var taskConstraintExitOn = ""
           var taskConstraintLaterTaskId = 0
+          var taskConstraintBusinessRule = ""
+
+          var hasSpectra = false
+          var hasRadio = false
+          var hasXray = false
 
           lastEntry match {
             case None => coordinates = newJob(SET, uuid)
-            case entry: Tasklog => {
+            case entry: Tasklog =>
 
               Task.findById(entry.question_id).map { tConstraint =>
                 taskConstraintExitOn = tConstraint.exitOn
                 taskConstraintLaterTaskId = tConstraint.laterTaskId
+                taskConstraintBusinessRule = tConstraint.businessRule
+              }
+
+              hasSpectra = Coordinate.coordinateHasSpectra(entry.sdss_id)
+              hasRadio = Coordinate.coordinateHasRadio(entry.sdss_id)
+              hasXray = Coordinate.coordinateHasXray(entry.sdss_id)
+              Logger.debug("xray " + hasXray + "spectra " + hasSpectra + "radio " + hasRadio)
+              // Business rules
+              var plusFactor = 0
+              if (taskConstraintBusinessRule.contains("check_xray")) {
+                if (!hasXray && !hasSpectra && !hasRadio) {
+                  //Logger.debug("xray=has nothing,1")
+                  taskConstraintLaterTaskId = 0
+                } else if (!hasXray && (hasRadio || hasSpectra)) {
+                  plusFactor = 1
+                  //Logger.debug("xray=has radio or spectra,2")
+                }
+              } else if (taskConstraintBusinessRule.contains("check_spectra")) {
+                if (!hasSpectra && !hasRadio) {
+                  //Logger.debug("spectra=has nothing,3")
+                  taskConstraintLaterTaskId = 0
+                } else if (hasRadio) {
+                  //Logger.debug("spectra=has radio,4")
+                }
+              } else if (taskConstraintBusinessRule.contains("check_radio")) {
+                if (!hasRadio) {
+                  taskConstraintLaterTaskId = 0
+                  //Logger.debug("radio=has nothing,5")
+                }
               }
 
               if (entry.answer == taskConstraintExitOn || taskConstraintLaterTaskId == 0) {
@@ -75,16 +108,11 @@ object TaskDaemon extends Controller {
                 }
 
                 coordinates = newJob(SET, uuid)
-              } else if (entry.answer == "no" && taskConstraintExitOn == "halt") {
-                coordinates = Coordinate.findBySdssId(entry.sdss_id)
-                questionId = entry.question_id + 2
               } else {
-                //Logger.debug("old job cont")
                 coordinates = Coordinate.findBySdssId(entry.sdss_id)
-                questionId = entry.question_id + 1
+                questionId = entry.question_id + 1 + plusFactor
               }
 
-            }
           }
 
           coordinates match {
@@ -112,7 +140,7 @@ object TaskDaemon extends Controller {
               }
 
               // Spectras
-              val listOfSpectras = Spectra.findByName(coordinatesSdssId)
+              val listOfSpectras = Spectra.findByName(coordinatesSdssId.toString())
 
               // Statistics
               // Get number of solved tasks
@@ -120,7 +148,6 @@ object TaskDaemon extends Controller {
               implicit val spectraFormat = Json.format[Spectra]
 
               val isRated: Boolean = Comment.findByUuidAndSdss(uuid, coordinatesSdssId)
-              Logger.debug(uuid.toString() + " :: " + coordinatesSdssId.toString())
 
               val returnObject = Json.toJson(
                 Map(
@@ -134,14 +161,15 @@ object TaskDaemon extends Controller {
                         "question" -> Json.toJson(task),
                         "question_id" -> Json.toJson(taskId.toString),
                         "tooltip" -> Json.toJson(taskComment),
-                        "spectras" -> Json.toJson(listOfSpectras)))),
+                        "spectras" -> Json.toJson(listOfSpectras),
+                        "set" -> Json.toJson(SET)))),
                   "options" -> Seq(
                     Json.toJson(
                       Map(
                         "is_rated" -> Json.toJson(isRated),
                         "user_known" -> Json.toJson(false),
                         "persona_info" -> Json.toJson(false),
-                        "preset" -> Json.toJson(false),
+                        "preset" -> Json.toJson(taskPreset),
                         "notification" -> Json.toJson(false)))),
                   "statistics" -> Seq(
                     Json.toJson(
@@ -154,7 +182,6 @@ object TaskDaemon extends Controller {
               Ok("All tasks are done")
 
           }
-        }
 
       }.recoverTotal {
         e => BadRequest("Detected error:" + JsError.toFlatJson(e))

@@ -1,13 +1,12 @@
 package models
-import play.api.db._
-import play.api.Play.current
-import scala.language.postfixOps
-
-import anorm._
 import anorm.SqlParser._
-
+import anorm._
 import io.really.jwt._
+import play.api.Play.current
+import play.api.db._
 import play.api.libs.json.Json
+
+import scala.language.postfixOps
 /**
  * An entry in the product catalogue.
  *
@@ -20,6 +19,10 @@ import play.api.libs.json.Json
  * @param uuid User The identification Uuid of the user
  */
 case class User(email: String, firstname: String, lastname: String, roleId: Int, active: Int, password: String, uuid: String)
+
+
+case class UserRegister(email: String, firstname: String, lastname: String, password: String)
+
 
 /**
  * This Model is used to get data from the Usermodel
@@ -48,7 +51,7 @@ object User {
   /**
    * Find all Users by email
    *
-   * @param email
+   * @param email The email of the user
    * @return Option[User] finds zero or one user by email
    */
   def findByEmail(email: String): Option[User] = {
@@ -116,7 +119,7 @@ object User {
   def getUuidByEncryptedString(uuidEncrypted: String): String = {
     val jwTokenDecode = User.decodeJWT(uuidEncrypted)
     val email = jwTokenDecode.value("email").toString.replace("\"", "")
-    return User.getUuidByEmail(email)
+    User.getUuidByEmail(email)
   }
 
   /**
@@ -131,14 +134,11 @@ object User {
     val checkUser = findByEmailAndPassword(email, password)
     checkUser match {
       case None => ""
-      case user: Option[User] => {
+      case user: Option[User] =>
         val payload = Json.obj("email" -> email, "password" -> password, "data" -> 1466899053)
         val jwToken = JWT.encode(secret, payload)
         jwToken
-      }
-
     }
-
   }
 
   /**
@@ -155,12 +155,13 @@ object User {
   /**
    * Insert an User
    *
-   * @param email
-   * @param lastname
-   * @param firstname
-   * @param roleId
-   * @param password
-   * @return
+   * @param email The email of the user
+   * @param lastname The lastname of the user
+   * @param firstname The firstname of the user
+   * @param roleId The roleId of the user
+   * @param password The password of the user
+   *
+   * @return Gives back a 1 if the user is inserted successfully
    */
   def insertUser(email: String, lastname: String, firstname: String, roleId: Int, password: String): Int = {
     val uuid = java.util.UUID.randomUUID.toString //@ToDo test for double random uuids

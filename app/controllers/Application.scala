@@ -1,11 +1,11 @@
 package controllers
 
 import core.AuthAction
-import views._
-import models.{User, Task, Coordinate, Tasklog, Comment}
-import play.api.mvc._
-import play.api.data._
+import models.{Comment, Coordinate, Task, Tasklog, User}
 import play.api.data.Forms._
+import play.api.data._
+import play.api.mvc._
+import views._
 
 object Application extends Controller {
 
@@ -40,6 +40,7 @@ object Application extends Controller {
       case None           => Ok(views.html.sorry.render())
     }
 }
+
 
   /**
    * Show tasklist
@@ -130,7 +131,7 @@ object Application extends Controller {
   }
 
   def showjwt = AuthAction {
-    val jwtoken = User.getJWT("david.pinezich@gmail.com", "test");
+    val jwtoken = User.getJWT("david.pinezich@gmail.com", "test")
     val jwTokenDecode = User.decodeJWT(jwtoken)
 
     Ok(html.showjwt.render(jwtoken, jwTokenDecode))
@@ -146,7 +147,7 @@ object Application extends Controller {
 
 
   def downloadCoordinates(opt: String, size: String, limit: Int, offset: Int) = Action {
-    Coordinates.downloadFile(opt, size, limit, offset);
+    Coordinates.downloadFile(opt, size, limit, offset)
     Ok(html.downloader.render())
   }
 
