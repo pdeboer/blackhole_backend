@@ -7,6 +7,12 @@ import play.api.data._
 import play.api.mvc._
 import views._
 
+/**
+ * This Controller is used as a central Controller for the backend
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Application extends Controller {
 
   // The user login Tuple

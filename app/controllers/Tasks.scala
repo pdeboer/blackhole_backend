@@ -1,37 +1,34 @@
 package controllers
 
-import controllers.Application._
 import models.Task
-import play.api.Logger
+import play.api.data.Forms._
+import play.api.data._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
-import play.api.data._
-import play.api.data.Forms._
 
-
+/**
+ * This Controller is used as a controller for the contact form
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Tasks extends Controller {
   // The user login Tuple
   val form = Form(
     tuple(
       "comment" -> text,
-      "taskid" -> number
-    )
-  )
-
+      "taskid" -> number))
 
   def updateComment = Action { implicit request =>
 
-      val (comment, taskid) = form.bindFromRequest.get
+    val (comment, taskid) = form.bindFromRequest.get
 
-      val task = Task.updateComment(taskid.toInt, comment)
-      val flash = play.api.mvc.Flash(Map(
-        "success" -> "comment updated"
-      ))
-      Ok(views.html.tasklist.render(Task.findAll()))
-    }
-
-
+    val task = Task.updateComment(taskid.toInt, comment)
+    val flash = play.api.mvc.Flash(Map(
+      "success" -> "comment updated"))
+    Ok(views.html.tasklist.render(Task.findAll()))
+  }
 
   /**
    * List tasks as a json representation
@@ -56,8 +53,7 @@ object Tasks extends Controller {
       "exitOn" -> Json.toJson(t.exitOn),
       "businessRule" -> Json.toJson(t.businessRule),
       "comment" -> Json.toJson(t.comment),
-      "preset" -> Json.toJson(t.preset)
-    )
+      "preset" -> Json.toJson(t.preset))
   }
 
   /**
@@ -115,15 +111,14 @@ object Tasks extends Controller {
    */
   implicit val userReads: Reads[Task] = (
     (JsPath \ "id").read[Int] and
-      (JsPath \ "task").read[String] and
-      (JsPath \ "taskType").read[String] and
-      (JsPath \ "value").read[Int] and
-      (JsPath \ "formerTaskId").read[Int] and
-      (JsPath \ "laterTaskId").read[Int] and
-      (JsPath \ "exitOn").read[String] and
-      (JsPath \ "businessRule").read[String] and
-      (JsPath \ "comment").read[String] and
-      (JsPath \ "preset").read[String]
-    )(Task.apply _)
+    (JsPath \ "task").read[String] and
+    (JsPath \ "taskType").read[String] and
+    (JsPath \ "value").read[Int] and
+    (JsPath \ "formerTaskId").read[Int] and
+    (JsPath \ "laterTaskId").read[Int] and
+    (JsPath \ "exitOn").read[String] and
+    (JsPath \ "businessRule").read[String] and
+    (JsPath \ "comment").read[String] and
+    (JsPath \ "preset").read[String])(Task.apply _)
 
 }

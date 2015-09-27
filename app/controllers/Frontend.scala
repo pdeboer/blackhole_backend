@@ -1,13 +1,18 @@
 package controllers
 
 import java.io._
-import play.api.mvc.{Controller, _}
+
+import play.api.Play.current
 import play.api._
-import play.api.mvc._
+import play.api.mvc.{Controller, _}
 
-import Play.current
-
-
+/**
+ * This Frontend controller makes it possible to have the frontend out of the actual source,
+ * that is a must because we want to have an angular app which is not deployed with the actual scala/play app
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Frontend extends Controller {
 
   val AbsolutePath = """^(/|[a-zA-Z]:\\).*""".r

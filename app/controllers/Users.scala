@@ -7,6 +7,12 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json.{Json, _}
 import play.api.mvc.{Controller, _}
 
+/**
+ * This Controller is used as a controller for the contact form
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Users extends Controller {
 
   // User Form
@@ -18,9 +24,7 @@ object Users extends Controller {
       "roleId" -> number,
       "active" -> number,
       "password" -> nonEmptyText,
-      "uuid" -> nonEmptyText
-    )(User.apply)(User.unapply)
-  )
+      "uuid" -> nonEmptyText)(User.apply)(User.unapply))
 
   // User Form
   val userFormRegister = Form(
@@ -28,9 +32,7 @@ object Users extends Controller {
       "email" -> nonEmptyText,
       "lastname" -> nonEmptyText,
       "firstname" -> nonEmptyText,
-      "password" -> nonEmptyText
-    )(UserRegister.apply)(UserRegister.unapply)
-  )
+      "password" -> nonEmptyText)(UserRegister.apply)(UserRegister.unapply))
 
   /**
    * List "all" users by email
@@ -42,15 +44,12 @@ object Users extends Controller {
     Ok(Json.toJson(userEmails))
   }
 
-
   /**
    * Login Tuple
    */
   implicit val login = (
     (__ \ 'email).read[String] and
-      (__ \ 'password).read[String]
-    ) tupled
-
+    (__ \ 'password).read[String]) tupled
 
   /**
    * Submit of the login tuple for the admin services
@@ -59,10 +58,10 @@ object Users extends Controller {
    */
   def getUuid() = Action { request =>
     request.body.asJson.map { json =>
-      json.validate[(String, String)].map{
+      json.validate[(String, String)].map {
         case (email, password) => Ok(User.getUuid(email, password))
-      }.recoverTotal{
-        e => BadRequest("Detected error:"+ JsError.toFlatJson(e))
+      }.recoverTotal {
+        e => BadRequest("Detected error:" + JsError.toFlatJson(e))
       }
     }.getOrElse {
       BadRequest("Expecting Json data")
@@ -76,10 +75,10 @@ object Users extends Controller {
    */
   def getJWT() = Action { request =>
     request.body.asJson.map { json =>
-      json.validate[(String, String)].map{
+      json.validate[(String, String)].map {
         case (email, password) => Ok(User.getJWT(email, password))
       }.recoverTotal {
-        e => BadRequest("Error"+ JsError.toFlatJson(e))
+        e => BadRequest("Error" + JsError.toFlatJson(e))
       }
     }.getOrElse {
       BadRequest("Expecting Json Data")
@@ -93,19 +92,17 @@ object Users extends Controller {
    * @return void
    */
   def insertUser = Action { implicit request =>
-      val flash = play.api.mvc.Flash(Map("error" -> "User was not inserted"))
-      userForm.bindFromRequest().fold(
-        formWithErrors => BadRequest(views.html.userlist.render(User.findAll(), flash)),
-        tempUser => {
-          val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, tempUser.roleId, tempUser.password)
-          val flash = play.api.mvc.Flash(Map(
-            "success" -> "User was succesfully inserted"
-          ))
-          Ok(views.html.userlist.render(User.findAll(), flash))
-        })
+    val flash = play.api.mvc.Flash(Map("error" -> "User was not inserted"))
+    userForm.bindFromRequest().fold(
+      formWithErrors => BadRequest(views.html.userlist.render(User.findAll(), flash)),
+      tempUser => {
+        val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, tempUser.roleId, tempUser.password)
+        val flash = play.api.mvc.Flash(Map(
+          "success" -> "User was succesfully inserted"))
+        Ok(views.html.userlist.render(User.findAll(), flash))
+      })
 
-    }
-
+  }
 
   /**
    * Inserts an User from frontend
@@ -116,7 +113,7 @@ object Users extends Controller {
     userFormRegister.bindFromRequest().fold(
       formWithErrors => BadRequest("failed"),
       tempUser => {
-        if(User.getUuidByEmail(tempUser.email) != "") {
+        if (User.getUuidByEmail(tempUser.email) != "") {
           Ok("exists already")
         } else {
           val id = User.insertUser(tempUser.email, tempUser.firstname, tempUser.lastname, 1, tempUser.password)
@@ -125,7 +122,6 @@ object Users extends Controller {
       })
 
   }
-
 
   /**
    * Delete an User
@@ -136,8 +132,7 @@ object Users extends Controller {
   def deleteUser(email: String) = Action { implicit request =>
     val result = User.deleteUser(email)
     val flash = play.api.mvc.Flash(Map(
-      "success" -> "User was succesfully deleted"
-    ))
+      "success" -> "User was succesfully deleted"))
     Ok(views.html.userlist.render(User.findAll(), flash))
   }
 
@@ -150,8 +145,7 @@ object Users extends Controller {
   def changeActiveUser(email: String) = Action { implicit request =>
     val result = User.changeActiveUser(email)
     val flash = play.api.mvc.Flash(Map(
-      "success" -> "active state was successfully changed"
-    ))
+      "success" -> "active state was successfully changed"))
     Ok(views.html.userlist.render(User.findAll(), flash))
   }
 
@@ -167,8 +161,7 @@ object Users extends Controller {
       "roleId" -> Json.toJson(p.roleId),
       "active" -> Json.toJson(p.active),
       "password" -> Json.toJson(p.password),
-      "uuid" -> Json.toJson(p.uuid)
-    )
+      "uuid" -> Json.toJson(p.uuid))
   }
 
   /**
@@ -188,13 +181,11 @@ object Users extends Controller {
    */
   implicit val userReads: Reads[User] = (
     (JsPath \ "email").read[String] and
-      (JsPath \ "firstname").read[String] and
-      (JsPath \ "lastname").read[String] and
-      (JsPath \ "roleId").read[Int] and
-      (JsPath \ "active").read[Int] and
-      (JsPath \ "password").read[String] and
-        (JsPath \ "uuid").read[String]
-    )(User.apply _)
-
+    (JsPath \ "firstname").read[String] and
+    (JsPath \ "lastname").read[String] and
+    (JsPath \ "roleId").read[Int] and
+    (JsPath \ "active").read[Int] and
+    (JsPath \ "password").read[String] and
+    (JsPath \ "uuid").read[String])(User.apply _)
 
 }

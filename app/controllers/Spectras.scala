@@ -4,9 +4,13 @@ import models.Spectra
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
-
+/**
+ * This Controller is used as a controller for the spectra model
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Spectras extends Controller {
-
 
   /**
    * List tasks as a json representation
@@ -23,22 +27,12 @@ object Spectras extends Controller {
    * Returns details of the spectra Json formatted
    *
    * @param name String A String to ensure the transformation is done right
-   * @return void
+   * @return Shows all spectras by json
    */
   def listByName(name: String) = Action {
     val allSpectras = Spectra.findByName(name).map(_.specobjid)
-/*
-    val returnArray = scala.collection.mutable.Map[Int, String]()
-    val i = 0
-    allSpectras.foreach { spec =>
-      returnArray(i) = spec.toString()
-    }
-    */
     Ok(Json.toJson(allSpectras.head.toString()))
   }
-
-
-
 
   /**
    * Formats a Spectra instance as JSON.
@@ -51,11 +45,8 @@ object Spectras extends Controller {
       "dec" -> Json.toJson(s.dec),
       "plate" -> Json.toJson(s.plate),
       "mjd" -> Json.toJson(s.mjd),
-    "fiber" -> Json.toJson(s.fiber),
-    "id" -> Json.toJson(s.id)
-    )
+      "fiber" -> Json.toJson(s.fiber),
+      "id" -> Json.toJson(s.id))
   }
-
-
 
 }

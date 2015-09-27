@@ -1,41 +1,50 @@
 package controllers
 
+import java.io._
+import java.net.URL
+
 import models.Coordinate
-import play.api.data._
+import play.api.Play
 import play.api.data.Forms._
+import play.api.data._
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import play.api.Play
-import sys.process._
-import java.net.URL
-import java.io._
-import play.api.Logger
 import play.api.mvc.{Controller, _}
 
+import scala.sys.process._
 
+/**
+ * This Controller is used as a controller for the contact form
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Coordinates extends Controller {
 
-
   /**
-   * File downloader
+   * File downloader (obsolete since imageDownloader)
    *
-   * @param url
-   * @param filename
-   * @return
+   * @param url The url of the file
+   * @param filename The filename
+   * @return returns nothing, file gets written
    */
   def fileDownloader(url: String, filename: String) = {
 
     // Check if its downloaded already
     val tmpFile = new File(filename).exists
-    if(!tmpFile) {
+    if (!tmpFile) {
       // write file
       new URL(url) #> new File(filename) !!
     }
   }
 
   /**
-   * Download sdss files
+   * Download the sdss file
    *
+   * @param opt The sdss options
+   * @param size The size of the image
+   * @param limit The limit of coordinates to be worked on
+   * @param offset The offset (startpoint) to be worked on
    * @return
    */
   def downloadFile(opt: String = "", size: String = "600", limit: Int = 1000, offset: Int = 0): Boolean = {
@@ -61,7 +70,7 @@ object Coordinates extends Controller {
     var subFolder = ""
 
     // Change subfolder
-    if(opt == "I") {
+    if (opt == "I") {
       subFolder = "inverted/"
     } else if (opt == "small") {
       subFolder = "small/"
@@ -69,9 +78,8 @@ object Coordinates extends Controller {
       subFolder = "point/"
     }
 
-
     val option = "&opt=" + opt
-    val pictureSize = "&width="+ size +"&height="+ size
+    val pictureSize = "&width=" + size + "&height=" + size
 
     val zoomLevel = Map(
       1 -> 50.704256,
@@ -91,33 +99,32 @@ object Coordinates extends Controller {
     //Logger.debug("public/images/sdss/" + subFolder + "1/23" +".png")
     //Logger.debug(baseUrl + "ra=23&dec=23&scale=26" + option + pictureSize)
 
-    val coords = Coordinate.findSome(limit,offset)
+    val coords = Coordinate.findSome(limit, offset)
     val imageDirectory = Play.current.configuration.getString("image.directory").get
-    if(mode == "downloader") {
+    if (mode == "downloader") {
       try {
-        coords.par.foreach {coord =>
+        coords.par.foreach { coord =>
 
-          zoomLevel.par.foreach {keyVal =>
+          zoomLevel.par.foreach { keyVal =>
             //Logger.debug(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize)
             //Logger.debug(imageDirectory + keyVal._1.toString + "/" + subFolder + coord.sdss_id.toString() +".png")
-            fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, imageDirectory + keyVal._1.toString + "/" + subFolder + coord.sdss_id.toString() +".png")
-            }
+            fileDownloader(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize, imageDirectory + keyVal._1.toString + "/" + subFolder + coord.sdss_id.toString() + ".png")
+          }
         }
       } catch {
         case e: Exception => "Image currently not found"
       }
     } else if (mode == "file") {
 
-      val writer = new PrintWriter(new File("public/coords_"+subFolder.substring(0, subFolder.length-1)+".txt"))
+      val writer = new PrintWriter(new File("public/coords_" + subFolder.substring(0, subFolder.length - 1) + ".txt"))
 
       coords.foreach { coord =>
-        zoomLevel.foreach {keyVal => writer.write(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize + "\n")}
+        zoomLevel.foreach { keyVal => writer.write(baseUrl + "ra=" + coord.ra + "&dec=" + coord.dec + "&scale=" + keyVal._2 + option + pictureSize + "\n") }
       }
       writer.close()
     }
-  true
+    true
   }
-
 
   // Coordinates Form
   val coordinatesForm = Form(
@@ -126,9 +133,7 @@ object Coordinates extends Controller {
       "sdss_id" -> bigDecimal,
       "ra" -> bigDecimal,
       "dec" -> bigDecimal,
-      "active" -> number
-    )(Coordinate.apply)(Coordinate.unapply)
-  )
+      "active" -> number)(Coordinate.apply)(Coordinate.unapply))
 
   /**
    * Insert a pair of Coordinates
@@ -142,37 +147,32 @@ object Coordinates extends Controller {
       tempCoordinates => {
         val Id = Coordinate.insertCoordinate(tempCoordinates.sdss_id, tempCoordinates.ra, tempCoordinates.dec)
         val flash = play.api.mvc.Flash(Map(
-          "success" -> "User was succesfully inserted"
-        ))
+          "success" -> "User was succesfully inserted"))
         Ok(views.html.coordinatelist.render(Coordinate.findAll(), flash))
       })
-    }
-
+  }
 
   /**
    * Delete a pair of coordinates
    *
-   * @param Id Int
-   * @return void
+   * @param Id Int id of coordinate to delet
+   * @return void The rendered coordinate list
    */
   def deleteCoordinate(Id: Int) = Action { implicit request =>
     val result = Coordinate.deleteCoordinate(Id)
     val flash = play.api.mvc.Flash(Map(
-      "success" -> "Coordinates successfully deleted"
-    ))
+      "success" -> "Coordinates successfully deleted"))
     Ok(views.html.coordinatelist.render(Coordinate.findAll(), flash))
   }
-
-  // Json part
 
   /**
    * List all Coordinates
    *
-   * @return void
+   * @return void Shows all coordinates
    */
   def list = Action {
-      val allCoordinates = Coordinate.findAll().map(_.id)
-      Ok(Json.toJson(allCoordinates))
+    val allCoordinates = Coordinate.findAll().map(_.id)
+    Ok(Json.toJson(allCoordinates))
   }
 
   /**
@@ -185,13 +185,12 @@ object Coordinates extends Controller {
       "sdss_id" -> Json.toJson(c.id),
       "ra" -> Json.toJson(c.ra),
       "dec" -> Json.toJson(c.dec),
-      "active" -> Json.toJson(c.active)
-    )
+      "active" -> Json.toJson(c.active))
   }
 
   /**
    * Return Json view of detail coordinates
-   * @param id Int
+   * @param id Int id of the coordinates
    * @return Coordinates Json
    */
   def detailCoordinate(id: Int) = Action {
@@ -203,12 +202,12 @@ object Coordinates extends Controller {
   /**
    * Get coordinates
    *
-   * @return
+   * @return find a random coordinate
    */
   def getCoordinates() = Action {
-      Coordinate.findByRand().map { coordinate =>
-        Ok(Json.toJson(coordinate))
-      }.getOrElse(NotFound)
+    Coordinate.findByRand().map { coordinate =>
+      Ok(Json.toJson(coordinate))
+    }.getOrElse(NotFound)
   }
 
   /**
@@ -216,10 +215,9 @@ object Coordinates extends Controller {
    */
   implicit val userReads: Reads[Coordinate] = (
     (JsPath \ "id").read[Option[Int]] and
-      (JsPath \ "sdss_id").read[BigDecimal] and
-      (JsPath \ "ra").read[BigDecimal] and
-      (JsPath \ "dec").read[BigDecimal] and
-      (JsPath \ "active").read[Int]
-    )(Coordinate.apply _)
+    (JsPath \ "sdss_id").read[BigDecimal] and
+    (JsPath \ "ra").read[BigDecimal] and
+    (JsPath \ "dec").read[BigDecimal] and
+    (JsPath \ "active").read[Int])(Coordinate.apply _)
 
 }

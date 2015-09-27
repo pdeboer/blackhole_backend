@@ -1,12 +1,17 @@
 package controllers
 
-import models.{User, Tasklog}
+import models.{Tasklog, User}
 import play.api.Logger
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
-
+/**
+ * This Controller serves for the logging of completed tasks
+ *
+ * @author David Pinezich <david.pinezich@uzh.ch>
+ * @version 1.0.0
+ */
 object Tasklogs extends Controller {
 
   /**
@@ -29,14 +34,13 @@ object Tasklogs extends Controller {
       "sdss_id" -> Json.toJson(t.sdss_id),
       "question_id" -> Json.toJson(t.question_id),
       "answer" -> Json.toJson(t.answer),
-      "ip" -> Json.toJson(t.ip)
-    )
+      "ip" -> Json.toJson(t.ip))
   }
 
   /**
    * Details of the Tasklog
    *
-   * @param id
+   * @param uuid The uuid of the user which completes a task
    * @return
    */
   def details(uuid: Int) = Action {
@@ -49,13 +53,11 @@ object Tasklogs extends Controller {
    * Parses the json object
    */
   implicit val tasklogReads: Reads[Tasklog] = (
-      (JsPath \ "uuid").read[String] and
-        (JsPath \ "sdss_id").read[BigDecimal] and
-      (JsPath \ "question_id").read[Int] and
-      (JsPath \ "answer").read[String] and
-        (JsPath \ "ip").read[String]
-    )(Tasklog.apply _)
-
+    (JsPath \ "uuid").read[String] and
+    (JsPath \ "sdss_id").read[BigDecimal] and
+    (JsPath \ "question_id").read[Int] and
+    (JsPath \ "answer").read[String] and
+    (JsPath \ "ip").read[String])(Tasklog.apply _)
 
   def save() = Action(parse.json) { request =>
     //Logger.info("start")
@@ -65,10 +67,9 @@ object Tasklogs extends Controller {
 
       val id = Tasklog.insertTasklog(User.getUuidByEncryptedString(log.uuid), log.sdss_id, log.question_id, log.answer, log.ip)
       Ok(id.get.toString())
-    }
-    catch {
-      case e:IllegalArgumentException => BadRequest("Log file does not exist")
-      case e:Exception =>
+    } catch {
+      case e: IllegalArgumentException => BadRequest("Log file does not exist")
+      case e: Exception =>
         Logger.info("exception = %s" format e)
         BadRequest("Invalid log")
     }
