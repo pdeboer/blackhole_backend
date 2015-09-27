@@ -1,10 +1,11 @@
 package models
-import play.api.db._
+import anorm.SqlParser._
+import anorm._
 import play.api.Play.current
+import play.api.db._
+
 import scala.language.postfixOps
 
-import anorm._
-import anorm.SqlParser._
 /**
  * An entry in the Comment list
  *
