@@ -61,13 +61,29 @@ object User {
   }
 
   /**
-   * Find all Users by email and password
+   * Find all Users by email and password (only for admins)
    *
    * @param email The email adress of the user
    * @param password The password of the user
    * @return Option[User] finds zeros or one user by password and email
    */
   def findByEmailAndPassword(email: String, password: String): Option[User] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT * FROM users WHERE email = {email} AND password = {password} AND active = 1 AND roleId = 3")
+        .on('email -> email)
+        .on('password -> password)
+        .as(User.simpleUser.singleOpt)
+    }
+  }
+
+  /**
+   * Find all Users by email and password
+   *
+   * @param email The email adress of the user
+   * @param password The password of the user
+   * @return Option[User] finds zeros or one user by password and email
+   */
+  def findByEmailAndPasswordUser(email: String, password: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT * FROM users WHERE email = {email} AND password = {password} AND active = 1")
         .on('email -> email)
@@ -131,7 +147,7 @@ object User {
    */
   def getJWT(email: String, password: String): String = {
     // @ToDo do timestamp automatic + 1month
-    val checkUser = findByEmailAndPassword(email, password)
+    val checkUser = findByEmailAndPasswordUser(email, password)
     checkUser match {
       case None => ""
       case user: Option[User] =>
