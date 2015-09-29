@@ -102,9 +102,13 @@ object TaskDaemon extends Controller {
 
               if (entry.answer == taskConstraintExitOn || taskConstraintLaterTaskId == 0) {
                 if (entry.answer == taskConstraintExitOn) {
-                  CompletedTaskLog.insertCompletedTasklog(uuid, "halted", entry.sdss_id, 1)
+                  if(CompletedTaskLog.CheckForInsert(uuid, "halted", entry.sdss_id, SET) == false) {
+                    CompletedTaskLog.insertCompletedTasklog(uuid, "halted", entry.sdss_id, SET)
+                  }
                 } else if (taskConstraintLaterTaskId == 0) {
-                  CompletedTaskLog.insertCompletedTasklog(uuid, "completed", entry.sdss_id, 1)
+                  if(CompletedTaskLog.CheckForInsert(uuid, "completed", entry.sdss_id, SET) == false) {
+                    CompletedTaskLog.insertCompletedTasklog(uuid, "completed", entry.sdss_id, SET)
+                  }
                 }
 
                 coordinates = newJob(SET, uuid)

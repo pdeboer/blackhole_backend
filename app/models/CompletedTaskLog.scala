@@ -1,12 +1,11 @@
 package models
 
-import akka.event.slf4j.Logger
-import play.api.db._
-import play.api.Play.current
-import scala.language.postfixOps
-import anorm._
 import anorm.SqlParser._
-import play.api.Logger._
+import anorm._
+import play.api.Play.current
+import play.api.db._
+
+import scala.language.postfixOps
 
 
 case class CompletedTaskLog(uuid: String, status: String, sdss_id: BigDecimal, set: Int)
@@ -93,6 +92,29 @@ object CompletedTaskLog {
         .executeInsert()
     }
     id
+  }
+
+  /**
+   * Check if insert is not already done
+   *
+   * @param uuid The uuid of the task completioner
+   * @param status The status (the "why") of the completion
+   * @param sdss_id The sdss_id to indentify the completed galaxy
+   * @param set The set which the galaxy is for
+   *
+   * @return Boolean is the insert ok or not
+   */
+  def CheckForInsert(uuid: String, status: String, sdss_id: BigDecimal, set: Int): Boolean = {
+    DB.withConnection { implicit connection =>
+      val rowOption = SQL("SELECT id FROM completedtasklog WHERE completedtasklog.uuid = {uuid} AND completedtasklog.status = {status} AND completedtasklog.sdss_id = {sdss_id} AND completedtasklog.set = {set} LIMIT 1")
+        .on('uuid -> uuid)
+        .on('status -> status)
+        .on('sdss_id -> sdss_id)
+        .on('set -> set)
+        .apply
+        .headOption
+      rowOption.map(row => true).getOrElse(false)
+    }
   }
 
   /**
