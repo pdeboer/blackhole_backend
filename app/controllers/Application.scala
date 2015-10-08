@@ -151,9 +151,18 @@ object Application extends Controller {
       "success" -> "You've been logged out")
   }
 
-
+  /**
+   * Wrapper method for obsolete download of images
+   *
+   * @param opt String options for downloading
+   * @param size String size of the image (hxw)
+   * @param limit Int limit of images
+   * @param offset Int offset of images to start with
+   *
+   * @return void Runs the downloader
+   */
   def downloadCoordinates(opt: String, size: String, limit: Int, offset: Int) = Action {
-    Coordinates.downloadFile(opt, size, limit, offset)
+    ImageDownloader.downloadFile(opt, size, limit, offset)
     Ok(html.downloader.render())
   }
 

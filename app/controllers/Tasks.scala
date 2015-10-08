@@ -20,10 +20,14 @@ object Tasks extends Controller {
       "comment" -> text,
       "taskid" -> number))
 
+  /**
+   * Update the comment for the individual task
+   *
+   * @return void render tasklist
+   */
   def updateComment = Action { implicit request =>
 
     val (comment, taskid) = form.bindFromRequest.get
-
     val task = Task.updateComment(taskid.toInt, comment)
     val flash = play.api.mvc.Flash(Map(
       "success" -> "comment updated"))
@@ -59,8 +63,8 @@ object Tasks extends Controller {
   /**
    * Returns details of the task Json formatted
    *
-   * @param id Int
-   * @return void
+   * @param id Int id of the task
+   * @return json string with details
    */
   def details(id: Int) = Action {
     Task.findById(id).map { task =>
@@ -71,8 +75,8 @@ object Tasks extends Controller {
   /**
    * Returns details of the task Json formatted
    *
-   * @param id Int
-   * @return void
+   * @param id Int id of the task
+   * @return render the tasklistcomment page
    */
   def changeComment(id: Int) = Action {
     //Logger.debug(Task.findById(id).toString)
@@ -84,8 +88,8 @@ object Tasks extends Controller {
   /**
    * Returns details of the task Json formatted
    *
-   * @param id Int
-   * @return void
+   * @param id Int id of the task
+   * @return gives back next task
    */
   def getNext(id: Int) = Action {
     val newId = id + 1;
@@ -97,8 +101,8 @@ object Tasks extends Controller {
   /**
    * Details Html
    *
-   * @param id
-   * @return
+   * @param id Int id of the task
+   * @return details of the task as json
    */
   def detailsHtml(id: Int) = Action {
     Task.findById(id).map { task =>

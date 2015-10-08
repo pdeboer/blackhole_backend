@@ -1,7 +1,6 @@
 package controllers
 
 import models._
-import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
@@ -10,15 +9,22 @@ import play.api.libs.functional.syntax._
 
 object TaskDaemon extends Controller {
 
+  // The task reader
   implicit val rds = (
     (__ \ 'jwt).read[String] and
     (__ \ 'ip).read[String]) tupled
 
+  /**
+   * This method is used to deliver the next action for the user
+   *
+   * @return JSON with all data combined
+   */
   def getNext = Action { request =>
+    // First of all, make sure the request is legit and has a jwt + ip
     request.body.asJson.map { json =>
       json.validate[(String, String)].map {
         case (jwt, ip) =>
-
+          // find the active set_id and set it as a constant
           val SET = Set.findActiveSet()
 
           // Standard values for coordinates
@@ -58,14 +64,16 @@ object TaskDaemon extends Controller {
           var taskConstraintLaterTaskId = 0
           var taskConstraintBusinessRule = ""
 
+          // Control variables
           var hasSpectra = false
           var hasRadio = false
           var hasXray = false
 
+          // Check the last entry the user mase
           lastEntry match {
-            case None => coordinates = newJob(SET, uuid)
+            case None => coordinates = newJob(SET, uuid) // no last entry, new job
             case entry: Tasklog =>
-
+              // Find the task by id
               Task.findById(entry.question_id).map { tConstraint =>
                 taskConstraintExitOn = tConstraint.exitOn
                 taskConstraintLaterTaskId = tConstraint.laterTaskId
@@ -75,7 +83,7 @@ object TaskDaemon extends Controller {
               hasSpectra = Coordinate.coordinateHasSpectra(entry.sdss_id)
               hasRadio = Coordinate.coordinateHasRadio(entry.sdss_id)
               hasXray = Coordinate.coordinateHasXray(entry.sdss_id)
-              Logger.debug("xray " + hasXray + "spectra " + hasSpectra + "radio " + hasRadio)
+
               // Business rules
               var plusFactor = 0
               if (taskConstraintBusinessRule.contains("check_xray")) {
@@ -84,41 +92,39 @@ object TaskDaemon extends Controller {
                   taskConstraintLaterTaskId = 0
                 } else if (!hasXray && (hasRadio || hasSpectra)) {
                   plusFactor = 1
-                  //Logger.debug("xray=has radio or spectra,2")
                 }
               } else if (taskConstraintBusinessRule.contains("check_spectra")) {
                 if (!hasSpectra && !hasRadio) {
-                  //Logger.debug("spectra=has nothing,3")
                   taskConstraintLaterTaskId = 0
                 } else if (hasRadio) {
-                  //Logger.debug("spectra=has radio,4")
                 }
               } else if (taskConstraintBusinessRule.contains("check_radio")) {
                 if (!hasRadio) {
                   taskConstraintLaterTaskId = 0
-                  //Logger.debug("radio=has nothing,5")
                 }
               }
 
+              // Depending on the "why" a special finished database entry will be set
               if (entry.answer == taskConstraintExitOn || taskConstraintLaterTaskId == 0) {
                 if (entry.answer == taskConstraintExitOn) {
-                  if(CompletedTaskLog.CheckForInsert(uuid, "halted", entry.sdss_id, SET) == false) {
+                  if (CompletedTaskLog.CheckForInsert(uuid, "halted", entry.sdss_id, SET) == false) {
                     CompletedTaskLog.insertCompletedTasklog(uuid, "halted", entry.sdss_id, SET)
                   }
                 } else if (taskConstraintLaterTaskId == 0) {
-                  if(CompletedTaskLog.CheckForInsert(uuid, "completed", entry.sdss_id, SET) == false) {
+                  if (CompletedTaskLog.CheckForInsert(uuid, "completed", entry.sdss_id, SET) == false) {
                     CompletedTaskLog.insertCompletedTasklog(uuid, "completed", entry.sdss_id, SET)
                   }
                 }
-
+                // Get a new job in other cases
                 coordinates = newJob(SET, uuid)
               } else {
+                // Choose the right job id, depending if xray, spectra... exist
                 coordinates = Coordinate.findBySdssId(entry.sdss_id)
                 questionId = entry.question_id + 1 + plusFactor
               }
 
           }
-
+          // Check the coordinates
           coordinates match {
             case Some(coords) =>
               coordinatesRa = coords.ra
@@ -151,8 +157,10 @@ object TaskDaemon extends Controller {
               val solvedTasks = CompletedTaskLog.getNumberOfCompletedTasks(uuid)
               implicit val spectraFormat = Json.format[Spectra]
 
+              // Find out if it is already rated for persistance
               val isRated: Boolean = Comment.findByUuidAndSdss(uuid, coordinatesSdssId)
 
+              // Create the return json
               val returnObject = Json.toJson(
                 Map(
                   "return" -> Seq(
@@ -183,7 +191,7 @@ object TaskDaemon extends Controller {
               Ok(returnObject)
 
             case None =>
-              Ok("All tasks are done")
+              Ok("All tasks are done") // finished with the set
 
           }
 
@@ -195,8 +203,16 @@ object TaskDaemon extends Controller {
     }
   }
 
+  /**
+   * If a new job needs to be accuired (new galaxy image)
+   *
+   * @param set set of the actual used set
+   * @param uuid uuid of the user
+   *
+   * @return Option[Coordinate] delivers a set of coordinates
+   */
   def newJob(set: Int, uuid: String): Option[Coordinate] = Option[Coordinate] {
-
+    // Get random a new coordinate found inside the set and not yet finished
     val coordinates = Coordinate.findByRandWithSetAndUuid(set, uuid)
     coordinates match {
       case Some(coords) => return coordinates

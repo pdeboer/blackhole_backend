@@ -1,10 +1,10 @@
 package models
-import play.api.db._
-import play.api.Play.current
-import scala.language.postfixOps
-
-import anorm._
 import anorm.SqlParser._
+import anorm._
+import play.api.Play.current
+import play.api.db._
+
+import scala.language.postfixOps
 
 /**
  * An entry in the Task list
@@ -35,7 +35,7 @@ object Task {
    */
   def findAll(): List[Task] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT * FROM tasks").as(Task.simpleTask *)
+      SQL("SELECT * FROM tasks ORDER BY id").as(Task.simpleTask *)
     }
   }
 
@@ -47,7 +47,7 @@ object Task {
    */
   def findById(id: Int): Option[Task] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from tasks WHERE id = {id}").on('id -> id).as(Task.simpleTask.singleOpt)
+      SQL("SELECT * FROM tasks WHERE id = {id}").on('id -> id).as(Task.simpleTask.singleOpt)
     }
   }
 

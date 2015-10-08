@@ -139,8 +139,8 @@ object Users extends Controller {
   /**
    * Change active state
    *
-   * @param email
-   * @return void
+   * @param email email of the user
+   * @return void rendered findAll view
    */
   def changeActiveUser(email: String) = Action { implicit request =>
     val result = User.changeActiveUser(email)
@@ -167,8 +167,8 @@ object Users extends Controller {
   /**
    * Lists details of all Users
    *
-   * @param email
-   * @return void
+   * @param email email of the user
+   * @return void Json string of the user
    */
   def details(email: String) = Action {
     User.findByEmail(email).map { user =>
