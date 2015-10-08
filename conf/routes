@@ -27,6 +27,9 @@ GET /deletecoordinate/:id      controllers.Coordinates.deleteCoordinate(id: Int)
 GET /logout                    controllers.Application.logout
 GET /show                      controllers.Application.show
 
+#Contact
+POST /contact                   controllers.Contacts.save
+
 #Tasklog
 POST /tasklog                  controllers.Tasklogs.save
 GET /tasklogs                  controllers.Tasklogs.list
@@ -41,7 +44,7 @@ GET /tasks/comment/:id            controllers.Tasks.changeComment(id: Int)
 POST /tasks/updatecomment          controllers.Tasks.updateComment
 
 # Spectras
-GET /spectras/:name             controllers.Spectras.listByName(name: Int)
+GET /spectras/:name             controllers.Spectras.listByName(name: String)
 
 #Users
 POST        /users/getUuid               controllers.Users.getUuid
@@ -51,6 +54,7 @@ GET /users/:email                   controllers.Users.details(email: String)
 #PUT /users/:email                   controllers.Users.save(email: String)
 GET /userlist                   controllers.Application.userlist
 POST /insertuser        controllers.Users.insertUser
+POST /insertuserregister        controllers.Users.insertUserRegister
 GET /deleteuser/:email           controllers.Users.deleteUser(email: String)
 GET /changeactive/:email           controllers.Users.changeActiveUser(email: String)
 
