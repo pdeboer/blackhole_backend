@@ -53,6 +53,9 @@ GET /users                          controllers.Users.list
 GET /users/:email                   controllers.Users.details(email: String)
 #PUT /users/:email                   controllers.Users.save(email: String)
 GET /userlist                   controllers.Application.userlist
+GET /userlistClassification                   controllers.Application.userlistWithClassifiction
+GET /userClassifications/:id                   controllers.Application.userClassifications(id: Int)
+
 POST /insertuser        controllers.Users.insertUser
 POST /insertuserregister        controllers.Users.insertUserRegister
 GET /deleteuser/:email           controllers.Users.deleteUser(email: String)

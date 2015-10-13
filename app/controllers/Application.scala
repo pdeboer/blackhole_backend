@@ -144,6 +144,26 @@ object Application extends Controller {
   }
 
   /**
+   * Show Userlist with classifications
+   *
+   * @return void
+   */
+  def userlistWithClassifiction = AuthAction {
+    Ok(views.html.classificationUserlist.render(User.findAllWithClassification()))
+  }
+
+
+  /**
+   * Show classifications of a user
+   *
+   * @return void
+   */
+  def userClassifications(id: Int) = AuthAction {
+    Ok(views.html.userClassifications.render(Tasklog.findAllClassificationsOfUser(id)))
+  }
+
+
+  /**
    * Logout and clean the session.
    */
   def logout = Action {

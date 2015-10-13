@@ -1,0 +1,35 @@
+@(tasklogs: List[classificationsOfUser])
+
+@main("Classifications of User") {
+<h3>Classifications:</h3>
+<table id="usertable" class="table table-striped">
+    <thead>
+    <tr>
+        <th>sdss_id</th>
+        <th>question_id</th>
+        <th>answer</th>
+    </tr>
+    </thead>
+
+    <tfoot>
+    <tr>
+        <th>sdss_id</th>
+        <th>question_id</th>
+        <th>answer</th>
+    </tr>
+    </tfoot>
+    <tbody>
+    @for(tasklog <- tasklogs) {
+    <tr>
+        <td>@tasklog.sdss_id</td>
+        <td>@tasklog.question_id</td>
+        <td>@tasklog.answer</td>
+    </tr>
+    }
+    </tbody>
+</table><br />
+
+
+
+
+}

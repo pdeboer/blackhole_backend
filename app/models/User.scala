@@ -7,6 +7,7 @@ import play.api.db._
 import play.api.libs.json.Json
 
 import scala.language.postfixOps
+
 /**
  * An entry in the product catalogue.
  *
@@ -20,7 +21,23 @@ import scala.language.postfixOps
  */
 case class User(email: String, firstname: String, lastname: String, roleId: Int, active: Int, password: String, uuid: String)
 
+/**
+ * Users with classifications
+ *
+ * @param id Id of the user
+ * @param email email of the user
+ * @param classifications count of user classifications
+ */
+case class UserWithClassification(id: Int, email: String, classifications: Int)
 
+/**
+ * User registration
+ *
+ * @param email User email
+ * @param firstname User firstname
+ * @param lastname User lastname
+ * @param password User password
+ */
 case class UserRegister(email: String, firstname: String, lastname: String, password: String)
 
 
@@ -47,6 +64,19 @@ object User {
       SQL("SELECT * FROM users").as(User.simpleUser *)
     }
   }
+
+  /**
+   * Find all Users with classifications
+   *
+   * @return List[UserWithClassification] Lists all users
+   */
+  def findAllWithClassification(): List[UserWithClassification] = {
+    DB.withConnection { implicit connection =>
+      // @Todo configure for multiple sets var set:Int = Set.findActiveSet()
+      SQL("SELECT users.id, COUNT(email) as classifications, users.email FROM users INNER JOIN completedtasklog ON completedtasklog.uuid = users.uuid GROUP BY users.email").as(User.simpleUserWithClassifications *)
+    }
+  }
+
 
   /**
    * Find all Users by email
@@ -235,6 +265,17 @@ object User {
       get[String]("uuid") map {
         case email ~ firstname ~ lastname ~ roleId ~ active ~ password ~ uuid => User(email, firstname, lastname, roleId, active, password, uuid)
       }
+  }
+
+  /**
+   * Struct of User with classification
+   */
+  val simpleUserWithClassifications = {
+    get[Int]("id") ~
+      get[String]("email") ~
+      get[Int]("classifications")  map {
+      case id ~ email ~  classifications => UserWithClassification(id, email, classifications)
+    }
   }
 
 }

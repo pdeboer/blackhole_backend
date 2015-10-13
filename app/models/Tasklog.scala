@@ -1,10 +1,11 @@
 package models
 
-import play.api.db._
-import play.api.Play.current
-import scala.language.postfixOps
-import anorm._
 import anorm.SqlParser._
+import anorm._
+import play.api.Play.current
+import play.api.db._
+
+import scala.language.postfixOps
 
 /**
  * An entry in the Tasklog list
@@ -25,6 +26,15 @@ case class Tasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, answer: 
  * @param sdss_id
  */
 case class ratedTasklog(rating: Int, uuid: String, ip: String, sdss_id: BigDecimal)
+
+/**
+ * Shows all classifications of a user
+ *
+ * @param sdss_id Sdss id of galaxy
+ * @param question_id Id of the question (to task)
+ * @param answer Answer on the question
+ */
+case class classificationsOfUser(sdss_id: BigDecimal, question_id: Int, answer: String)
 
 /**
  * This Model is used to get data from the Tasklogmodel
@@ -68,6 +78,20 @@ object Tasklog {
       SQL("SELECT * FROM tasklog WHERE uuid = {uuid} ORDER BY timestamp DESC LIMIT 1").on('uuid -> uuid).as(Tasklog.simpleTasklog.singleOpt)
     }
   }
+
+  /**
+   * Find all classifications of a user
+   *
+   * @return List[UserWithClassification] Lists all users
+   */
+  def findAllClassificationsOfUser(id: Int): List[classificationsOfUser] = {
+    DB.withConnection { implicit connection =>
+      SQL("SELECT tasklog.sdss_id, tasklog.question_id, tasklog.answer FROM pplibdataanalyzer.tasklog INNER JOIN users ON users.uuid = tasklog.uuid WHERE users.`id` = {id} ORDER BY sdss_id, question_id")
+        .on('id -> id)
+        .as(Tasklog.classificationOfUser *)
+    }
+  }
+
 
   /**
    * Find best rated galaxy and their task
@@ -143,5 +167,18 @@ object Tasklog {
         case rating ~ uuid ~ ip ~ sdss_id => ratedTasklog(rating, uuid, ip, sdss_id)
       }
   }
+
+  /**
+   * classificationOfUser struct
+   */
+  val classificationOfUser = {
+      get[BigDecimal]("sdss_id") ~
+      get[Int]("question_id") ~
+      get[String]("answer") map {
+      case sdss_id ~ questio_id ~ answer => classificationsOfUser(sdss_id, questio_id, answer)
+    }
+  }
+
+
 
 }

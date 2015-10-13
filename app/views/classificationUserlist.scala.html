@@ -1,0 +1,38 @@
+@(users: List[UserWithClassification])
+
+@main("Users") {
+<h3>List of Users with Classifications:</h3>
+<table id="usertable" class="table table-striped">
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>email</th>
+        <th>classifications</th>
+        <th>see details</th>
+    </tr>
+    </thead>
+
+    <tfoot>
+    <tr>
+        <th>id</th>
+        <th>email</th>
+        <th>classifications</th>
+        <th>see details</th>
+    </tr>
+    </tfoot>
+    <tbody>
+    @for(user <- users) {
+    <tr>
+        <td>@user.id</td>
+        <td>@user.email</td>
+        <td>@user.classifications</td>
+        <td><a href="/userClassifications/@user.id"><span style="color:green;" class="glyphicon glyphicon-search"></span></a></td>
+    </tr>
+    }
+    </tbody>
+</table><br />
+
+
+
+
+}
