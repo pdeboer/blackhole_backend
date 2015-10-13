@@ -1,2 +1,11 @@
-PPLibDataAnalyzer
+Blackhole Chaser
 =================================
+
+This is the backend project of the blackhole chaser.
+It offers a backend gui which pretty basic in functionality but can be added to the needs of future users.
+And it also overs a REST API which can be consumed by everything right now and is consumed by an angular/html project
+called frontend.
+
+Run:
+./activator ui (see what happens)
+./activator run (let it run without gui)
