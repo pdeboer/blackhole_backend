@@ -88,18 +88,23 @@ object TaskDaemon extends Controller {
               var plusFactor = 0
               if (taskConstraintBusinessRule.contains("check_xray")) {
                 if (!hasXray && !hasSpectra && !hasRadio) {
-                  //Logger.debug("xray=has nothing,1")
                   taskConstraintLaterTaskId = 0
-                } else if (!hasXray && (hasRadio || hasSpectra)) {
+                  //
+                } else if (!hasXray && hasRadio) {
+                  plusFactor = 1
+                } else if (!hasXray && hasSpectra) {
+                  plusFactor = 2
+                }
+              } else if (taskConstraintBusinessRule.contains("check_radio")) {
+                if (!hasSpectra && !hasRadio) {
+                  // this case should never appear
+                  taskConstraintLaterTaskId = 0
+                } else if (hasSpectra) {
                   plusFactor = 1
                 }
               } else if (taskConstraintBusinessRule.contains("check_spectra")) {
-                if (!hasSpectra && !hasRadio) {
-                  taskConstraintLaterTaskId = 0
-                } else if (hasRadio) {
-                }
-              } else if (taskConstraintBusinessRule.contains("check_radio")) {
-                if (!hasRadio) {
+                if (!hasSpectra) {
+                  // this case should never appear
                   taskConstraintLaterTaskId = 0
                 }
               }
