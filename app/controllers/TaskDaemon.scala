@@ -90,7 +90,9 @@ object TaskDaemon extends Controller {
               hasRadio = Coordinate.coordinateHasRadio(entry.sdss_id)
               hasXray = Coordinate.coordinateHasXray(entry.sdss_id)
 
-              numberOfSpectras = Coordinate.countSpectrasForCoordinates(entry.sdss_id)
+              if(hasSpectra) {
+                numberOfSpectras = Coordinate.countSpectrasForCoordinates(entry.sdss_id)
+              }
               if(hasSpectra && questionId > 5) {
                 lastSpectra = entry.spectra_id;
                 nextSpectra = entry.spectra_id + 1;
