@@ -140,7 +140,7 @@ object TaskDaemon extends Controller {
               } else {
                 // Choose the right job id, depending if xray, spectra... exist
                 coordinates = Coordinate.findBySdssId(entry.sdss_id)
-                if (questionId > 7) {
+                if (questionId < 7) {
                   questionId = entry.question_id + 1 + plusFactor
                 } else {
                   questionId = 7
