@@ -101,7 +101,11 @@ object TaskDaemon extends Controller {
 
               // Business rules
               var plusFactor = 0
-              if (taskConstraintBusinessRule.contains("check_xray")) {
+              if (taskConstraintBusinessRule.contains("check_sdss")) {
+                if (entry.answer == "no") {
+                  plusFactor = 1
+                }
+              } else if (taskConstraintBusinessRule.contains("check_xray")) {
                 if (!hasXray && !hasSpectra && !hasRadio) {
                   taskConstraintLaterTaskId = 0
                   //
@@ -123,6 +127,9 @@ object TaskDaemon extends Controller {
                   taskConstraintLaterTaskId = 0
                 }
               } else if (taskConstraintBusinessRule.contains("check_all_spectra")) {
+                if(entry.answer == "no" && entry.question_id == 6) {
+                  taskConstraintLaterTaskId = 0
+                }
                 if (hasSpectra && (numberOfSpectras == lastSpectra)) {
                   Logger.info("full spectra")
                   taskConstraintLaterTaskId = 0
