@@ -71,7 +71,7 @@ object TaskDaemon extends Controller {
 
           // Counter variables
           var numberOfSpectras = 0;
-          var lastSpectra = 0;
+          var lastSpectra = null;
           var nextSpectra = 0;
           // Check the last entry the user mase
           lastEntry match {
