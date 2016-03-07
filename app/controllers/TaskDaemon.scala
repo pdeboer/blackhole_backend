@@ -93,7 +93,8 @@ object TaskDaemon extends Controller {
               if(hasSpectra) {
                 numberOfSpectras = Coordinate.countSpectrasForCoordinates(entry.sdss_id)
               }
-              if(hasSpectra && questionId > 5) {
+
+              if(hasSpectra && entry.question_id > 5) {
                 lastSpectra = entry.spectra_id;
                 nextSpectra = entry.spectra_id + 1;
               }
@@ -207,6 +208,7 @@ Logger.info(questionId.toString)
                         "hasRadio" -> Json.toJson(hasRadio), //debug
                         "hasXray" -> Json.toJson(hasXray), //debug
                         "lastSpectra" -> Json.toJson(lastSpectra), //debug
+                        "nextSpectra" -> Json.toJson(nextSpectra), //debug
                         "nrOfSpectras" -> Json.toJson(numberOfSpectras)))), //debug
                   "return" -> Seq(
                     Json.toJson(
