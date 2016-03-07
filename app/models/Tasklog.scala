@@ -133,7 +133,7 @@ object Tasklog {
    */
   def insertTasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
-      SQL("INSERT INTO tasklog(`uuid`, `sdss_id`, `question_id`, `spectra_id` `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {spectra_id}, {answer}, {ip})")
+      SQL("INSERT INTO tasklog(`uuid`, `sdss_id`, `question_id`, `spectra_id`, `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {spectra_id}, {answer}, {ip})")
         .on('uuid -> uuid)
         .on('sdss_id -> sdss_id)
         .on('question_id -> question_id)
