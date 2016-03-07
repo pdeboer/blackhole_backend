@@ -90,7 +90,7 @@ object TaskDaemon extends Controller {
               hasRadio = Coordinate.coordinateHasRadio(entry.sdss_id)
               hasXray = Coordinate.coordinateHasXray(entry.sdss_id)
 
-              if(hasSpectra) {
+              if(hasSpectra && questionId > 5) {
                 numberOfSpectras = Coordinate.countSpectrasForCoordinates(entry.sdss_id)
                 lastSpectra = entry.spectra_id;
                 nextSpectra = entry.spectra_id + 1;
@@ -120,7 +120,7 @@ object TaskDaemon extends Controller {
                   taskConstraintLaterTaskId = 0
                 }
               } else if (taskConstraintBusinessRule.contains("check_all_spectra")) {
-                if (hasSpectra && (numberOfSpectras-1 == lastSpectra)) {
+                if (hasSpectra && (numberOfSpectras == lastSpectra)) {
                   Logger.info("full spectra")
                   taskConstraintLaterTaskId = 0
                 }
@@ -145,13 +145,16 @@ object TaskDaemon extends Controller {
                 if (questionId < 7) {
                   questionId = entry.question_id + 1 + plusFactor
                 } else {
-                  questionId = 6
+                  questionId = 7
                 }
               }
-Logger.info(questionId.toString)
           }
 
-          Logger.info(questionId.toString)
+
+          // dirty hack...
+          if (questionId > 7) {
+            questionId = 7
+          }
 
 
           // Check the coordinates
@@ -164,7 +167,7 @@ Logger.info(questionId.toString)
 
               // Get next question
               val nextTask = Task.findById(questionId)
-
+Logger.info(questionId.toString)
               nextTask match {
                 case Some(nextTask) =>
                   taskId = nextTask.id
