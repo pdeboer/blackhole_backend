@@ -13,10 +13,11 @@ import scala.language.postfixOps
  * @param uuid Tasklog The uuid of the task
  * @param sdss_id Tasklog sdss_id
  * @param question_id Tasklog question
+ * @param spectra_id Tasklog spectra id (special, because there are more than one spectra possible)
  * @param answer Tasklog answer
  * @param ip Tasklog ip
  */
-case class Tasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, answer: String, ip: String)
+case class Tasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String)
 
 /**
  * A rated entry in the tasklog (comment)
@@ -130,12 +131,13 @@ object Tasklog {
    * @param ip The logged ip
    * @return Option[Long] The id of the insert
    */
-  def insertTasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, answer: String, ip: String): Option[Long] = {
+  def insertTasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
-      SQL("INSERT INTO tasklog(`uuid`, `sdss_id`, `question_id`, `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {answer}, {ip})")
+      SQL("INSERT INTO tasklog(`uuid`, `sdss_id`, `question_id`, `spectra_id` `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {spectra_id}, {answer}, {ip})")
         .on('uuid -> uuid)
         .on('sdss_id -> sdss_id)
         .on('question_id -> question_id)
+        .on('spectra_id -> spectra_id)
         .on('answer -> answer)
         .on('ip -> ip)
         .executeInsert()
@@ -150,9 +152,10 @@ object Tasklog {
     get[String]("uuid") ~ // get[Option[Int]]
       get[BigDecimal]("sdss_id") ~
       get[Int]("question_id") ~
+      get[Int]("spectra_id") ~
       get[String]("answer") ~
       get[String]("ip") map {
-        case uuid ~ sdss_id ~ question_id ~ answer ~ ip => Tasklog(uuid, sdss_id, question_id, answer, ip)
+        case uuid ~ sdss_id ~ question_id ~ spectra_id ~ answer ~ ip => Tasklog(uuid, sdss_id, question_id, spectra_id, answer, ip)
       }
   }
 

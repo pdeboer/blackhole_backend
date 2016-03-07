@@ -158,6 +158,38 @@ object Coordinate {
   }
 
   /**
+    * Checks if there is a spectra in the new spectra table for a given coordinate
+    *
+    * @param sdss_id The sdss_id of the coordinate
+    * @return Boolean value if the coordinate has a radio
+    */
+  def coordinateHasSpectraNew(sdss_id: BigDecimal): Boolean = {
+    DB.withConnection({ implicit connection =>
+      val rowOption = SQL("SELECT coordinates.sdss_id FROM coordinates INNER JOIN spectra_new ON spectra_new.sdss_id = coordinates.sdss_id WHERE coordinates.sdss_id = {sdss_id}")
+        .on('sdss_id -> sdss_id)
+        .apply
+        .headOption
+      rowOption.map(row => true).getOrElse(false)
+    })
+  }
+
+  /**
+    * Count of all Spectras of a given coord
+    *
+    * @return int Number of coordinates
+    */
+  def countSpectrasForCoordinates(sdss_id: BigDecimal): Int = {
+    DB.withConnection { implicit connection =>
+      val rowOption = SQL("SELECT COUNT(*) as count FROM spectra_new WHERE spectra_new.sdss_id = {sdss_id}")
+        .on('sdss_id -> sdss_id)
+        .apply
+        .headOption
+      rowOption.map(row => row[Int]("count")).getOrElse(0)
+    }
+
+  }
+
+  /**
    * Checks if there is a radio for a given coordinate
    *
    * @param sdss_id The sdss_id of the coordinate

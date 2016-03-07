@@ -69,6 +69,10 @@ object TaskDaemon extends Controller {
           var hasRadio = false
           var hasXray = false
 
+          // Counter variables
+          var numberOfSpectras = 0;
+          var lastSpectra = 0;
+          var nextSpectra = 0;
           // Check the last entry the user mase
           lastEntry match {
             case None => coordinates = newJob(SET, uuid) // no last entry, new job
@@ -80,9 +84,16 @@ object TaskDaemon extends Controller {
                 taskConstraintBusinessRule = tConstraint.businessRule
               }
 
-              hasSpectra = Coordinate.coordinateHasSpectra(entry.sdss_id)
+              //hasSpectra = Coordinate.coordinateHasSpectra(entry.sdss_id)
+              hasSpectra = Coordinate.coordinateHasSpectraNew(entry.sdss_id)
               hasRadio = Coordinate.coordinateHasRadio(entry.sdss_id)
               hasXray = Coordinate.coordinateHasXray(entry.sdss_id)
+
+              if(hasSpectra) {
+                numberOfSpectras = Coordinate.countSpectrasForCoordinates(entry.sdss_id)
+                lastSpectra = entry.spectra_id;
+                nextSpectra = entry.spectra_id + 1;
+              }
 
               // Business rules
               var plusFactor = 0
@@ -107,6 +118,10 @@ object TaskDaemon extends Controller {
                   // this case should never appear
                   taskConstraintLaterTaskId = 0
                 }
+              } else if (taskConstraintBusinessRule.contains("check_all_spectra")) {
+                if (hasSpectra && (numberOfSpectras-1 == lastSpectra)) {
+                  taskConstraintLaterTaskId = 0
+                }
               }
 
               // Depending on the "why" a special finished database entry will be set
@@ -125,10 +140,17 @@ object TaskDaemon extends Controller {
               } else {
                 // Choose the right job id, depending if xray, spectra... exist
                 coordinates = Coordinate.findBySdssId(entry.sdss_id)
-                questionId = entry.question_id + 1 + plusFactor
+                if (questionId > 7) {
+                  questionId = entry.question_id + 1 + plusFactor
+                } else {
+                  questionId = 7
+                }
               }
 
           }
+
+
+
           // Check the coordinates
           coordinates match {
             case Some(coords) =>
@@ -168,6 +190,16 @@ object TaskDaemon extends Controller {
               // Create the return json
               val returnObject = Json.toJson(
                 Map(
+                  "debug" -> Seq(
+                    Json.toJson(
+                      Map(
+                        "uuid" -> Json.toJson(uuid),
+                        "jwt" -> Json.toJson(jwt),
+                        "hasSpectras" -> Json.toJson(hasSpectra), //debug
+                        "hasRadio" -> Json.toJson(hasRadio), //debug
+                        "hasXray" -> Json.toJson(hasXray), //debug
+                        "lastSpectra" -> Json.toJson(lastSpectra), //debug
+                        "nrOfSpectras" -> Json.toJson(numberOfSpectras)))), //debug
                   "return" -> Seq(
                     Json.toJson(
                       Map(
@@ -178,7 +210,8 @@ object TaskDaemon extends Controller {
                         "question" -> Json.toJson(task),
                         "question_id" -> Json.toJson(taskId.toString),
                         "tooltip" -> Json.toJson(taskComment),
-                        "spectras" -> Json.toJson(listOfSpectras),
+                        "spectras" -> Json.toJson(listOfSpectras), //obsolete?
+                        "spectra_nr" -> Json.toJson(lastSpectra),
                         "set" -> Json.toJson(SET)))),
                   "options" -> Seq(
                     Json.toJson(
@@ -213,8 +246,7 @@ object TaskDaemon extends Controller {
    *
    * @param set set of the actual used set
    * @param uuid uuid of the user
-   *
-   * @return Option[Coordinate] delivers a set of coordinates
+    * @return Option[Coordinate] delivers a set of coordinates
    */
   def newJob(set: Int, uuid: String): Option[Coordinate] = Option[Coordinate] {
     // Get random a new coordinate found inside the set and not yet finished
