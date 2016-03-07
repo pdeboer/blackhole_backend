@@ -145,7 +145,7 @@ object TaskDaemon extends Controller {
                 if (questionId < 7) {
                   questionId = entry.question_id + 1 + plusFactor
                 } else {
-                  questionId = 7
+                  questionId = 6
                 }
               }
 Logger.info(questionId.toString)
