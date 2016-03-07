@@ -1,6 +1,7 @@
 package controllers
 
 import models._
+import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{Controller, _}
 
@@ -71,7 +72,7 @@ object TaskDaemon extends Controller {
 
           // Counter variables
           var numberOfSpectras = 0;
-          var lastSpectra = -1
+          var lastSpectra = 0
           var nextSpectra = 0;
           // Check the last entry the user mase
           lastEntry match {
@@ -120,6 +121,7 @@ object TaskDaemon extends Controller {
                 }
               } else if (taskConstraintBusinessRule.contains("check_all_spectra")) {
                 if (hasSpectra && (numberOfSpectras-1 == lastSpectra)) {
+                  Logger.info("full spectra")
                   taskConstraintLaterTaskId = 0
                 }
               }
@@ -146,9 +148,10 @@ object TaskDaemon extends Controller {
                   questionId = 7
                 }
               }
-
+Logger.info(questionId.toString)
           }
 
+          Logger.info(questionId.toString)
 
 
           // Check the coordinates
@@ -211,9 +214,10 @@ object TaskDaemon extends Controller {
                         "question_id" -> Json.toJson(taskId.toString),
                         "tooltip" -> Json.toJson(taskComment),
                         "spectras" -> Json.toJson(listOfSpectras), //obsolete?
-                        "spectra_nr" -> Json.toJson(lastSpectra),
+                        "spectra_nr" -> Json.toJson(nextSpectra),
+                        "nrOfSpectras" -> Json.toJson(numberOfSpectras), //debug
                         "set" -> Json.toJson(SET)))),
-                  "options" -> Seq(
+                        "options" -> Seq(
                     Json.toJson(
                       Map(
                         "is_rated" -> Json.toJson(isRated),
