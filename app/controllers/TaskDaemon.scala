@@ -101,17 +101,35 @@ object TaskDaemon extends Controller {
 
               // Business rules
               var plusFactor = 0
+
+              /**
+                * This is the businesslogic to left out certain images/shows for some occasions
+                * it is a true fact that the order must be stable, otherways we would need to refactor
+                * this thing. The current workflow is 3xSdss 1x xray 1x radio 2-Xx Spectra
+                */
               if (taskConstraintBusinessRule.contains("check_sdss")) {
                 if (entry.answer == "no") {
                   plusFactor = 1
                 }
+                if(!hasXray) {
+                  // No xray so hop 2
+                  plusFactor = plusFactor + 1
+                } else if(!hasXray && !hasRadio) {
+                  // No radio and xray so hop 3
+                  plusFactor = plusFactor + 2
+                } else if(!hasXray && !hasRadio && !hasSpectra) {
+                  // Nothing at all, jump out
+                  taskConstraintLaterTaskId = 0
+                }
               } else if (taskConstraintBusinessRule.contains("check_xray")) {
                 if (!hasXray && !hasSpectra && !hasRadio) {
+                  // All false, jump out
                   taskConstraintLaterTaskId = 0
-                  //
                 } else if (!hasXray && hasRadio) {
+                  // radio is in + 1 hopping
                   plusFactor = 1
-                } else if (!hasXray && hasSpectra) {
+                } else if (!hasXray && !hasRadio && hasSpectra) {
+                  // spectra is in but no radio, hop 2
                   plusFactor = 2
                 }
               } else if (taskConstraintBusinessRule.contains("check_radio")) {
@@ -119,6 +137,7 @@ object TaskDaemon extends Controller {
                   // this case should never appear
                   taskConstraintLaterTaskId = 0
                 } else if (hasSpectra) {
+                  // has a spectra, but no radio hop one
                   plusFactor = 1
                 }
               } else if (taskConstraintBusinessRule.contains("check_spectra")) {
