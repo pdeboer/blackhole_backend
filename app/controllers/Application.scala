@@ -1,11 +1,13 @@
 package controllers
 
 import core.AuthAction
-import models.{Comment, Coordinate, Task, Tasklog, User}
+import models._
 import play.api.data.Forms._
 import play.api.data._
+import play.api.libs.json.Json
 import play.api.mvc._
 import views._
+
 
 /**
  * This Controller is used as a central Controller for the backend
@@ -69,7 +71,8 @@ object Application extends Controller {
 
   /**
    * Shows the index
-   * @return
+    *
+    * @return
    */
   def show = Action { request =>
     request.session.get("active").map { email =>
@@ -178,12 +181,22 @@ object Application extends Controller {
    * @param size String size of the image (hxw)
    * @param limit Int limit of images
    * @param offset Int offset of images to start with
-   *
-   * @return void Runs the downloader
+    * @return void Runs the downloader
    */
   def downloadCoordinates(opt: String, size: String, limit: Int, offset: Int) = Action {
     ImageDownloader.downloadFile(opt, size, limit, offset)
     Ok(html.downloader.render())
+  }
+
+
+  implicit val tasklogStatisticsFormat = Json.writes[TasklogStatistics]
+  /**
+    *
+    * @return
+    */
+  def showTasklogStatistics() = Action {
+    val tasklogStatistics = TasklogStatistics.getTasklogStatistics()
+    Ok(Json.toJson(tasklogStatistics))
   }
 
 }
