@@ -48,7 +48,7 @@ object TasklogStatistics {
     *
     * @return List[ratedTasklog]
     */
-  def getTasklogStatistics(): List[TasklogStatistics] = {
+  def getTasklogStatistics(limit: Int = Coordinate.countCoordinates()): List[TasklogStatistics] = {
     DB.withConnection { implicit connection =>
       SQL("SELECT coordinates.id, coordinates.sdss_id, " +
         "IFNULL(SUM(tasklog.question_id = '1'), 0) AS total_answers," +
@@ -70,7 +70,9 @@ object TasklogStatistics {
         "FROM coordinates LEFT JOIN tasklog ON coordinates.sdss_id = tasklog.sdss_id " +
         "GROUP BY coordinates.id " +
         "ORDER BY coordinates.id, tasklog.question_id " +
-        "LIMIT 0, 1000").as(TasklogStatistics.simpleTasklogStatistic *)
+        "LIMIT 0, {limit}")
+        .on('limit -> limit)
+        .as(TasklogStatistics.simpleTasklogStatistic *)
     }
   }
 
