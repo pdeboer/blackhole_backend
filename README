@@ -9,3 +9,10 @@ called frontend.
 Run:
 ./activator ui (see what happens)
 ./activator run (let it run without gui)
+
+Current Data Status
+=================================
+
+1k Data :heavy_check_mark:
+5k Data Missing radio/xray
+48k Data only sdss & basic data (missing radio, xray, spectra)
