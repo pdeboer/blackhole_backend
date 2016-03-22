@@ -54,6 +54,7 @@ object Tasklogs extends Controller {
    */
   implicit val tasklogReads: Reads[Tasklog] = (
     (JsPath \ "uuid").read[String] and
+      (JsPath \ "set").read[Int] and
     (JsPath \ "sdss_id").read[BigDecimal] and
     (JsPath \ "question_id").read[Int] and
     (JsPath \ "spectra_id").read[Int] and
@@ -66,7 +67,7 @@ object Tasklogs extends Controller {
       val tasklogJson = request.body
       val log = tasklogJson.as[Tasklog] //@todo set id as optional //@todo rename uuid with jwt
 
-      val id = Tasklog.insertTasklog(User.getUuidByEncryptedString(log.uuid), log.sdss_id, log.question_id, log.spectra_id, log.answer, log.ip)
+      val id = Tasklog.insertTasklog(User.getUuidByEncryptedString(log.uuid), log.set, log.sdss_id, log.question_id, log.spectra_id, log.answer, log.ip)
       Ok(id.get.toString())
     } catch {
       case e: IllegalArgumentException => BadRequest("Log file does not exist")

@@ -11,13 +11,14 @@ import scala.language.postfixOps
  * An entry in the Tasklog list
  *
  * @param uuid Tasklog The uuid of the task
+ * @param set Tasklog set
  * @param sdss_id Tasklog sdss_id
  * @param question_id Tasklog question
  * @param spectra_id Tasklog spectra id (special, because there are more than one spectra possible)
  * @param answer Tasklog answer
  * @param ip Tasklog ip
  */
-case class Tasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String)
+case class Tasklog(uuid: String, set: Int, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String)
 
 /**
  * A rated entry in the tasklog (comment)
@@ -52,7 +53,7 @@ object Tasklog {
    */
   def findAll(): List[Tasklog] = {
     DB.withConnection { implicit connection =>
-      SQL("SELECT uuid, sdss_id, question_id, answer, timestamp, ip from tasklog").as(Tasklog.simpleTasklog *)
+      SQL("SELECT uuid, set, sdss_id, question_id, answer, timestamp, ip from tasklog").as(Tasklog.simpleTasklog *)
     }
   }
 
@@ -125,16 +126,18 @@ object Tasklog {
    * Insert Tasklog
    *
    * @param uuid The uuid of the user
+   * @param set The set of the user
    * @param sdss_id The sdss id (sdss_id)
    * @param question_id The question id
    * @param answer The answer given (yes / no)
    * @param ip The logged ip
    * @return Option[Long] The id of the insert
    */
-  def insertTasklog(uuid: String, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String): Option[Long] = {
+  def insertTasklog(uuid: String, set: Int, sdss_id: BigDecimal, question_id: Int, spectra_id: Int, answer: String, ip: String): Option[Long] = {
     val id: Option[Long] = DB.withConnection { implicit connection =>
-      SQL("INSERT INTO tasklog(`uuid`, `sdss_id`, `question_id`, `spectra_id`, `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {spectra_id}, {answer}, {ip})")
+      SQL("INSERT INTO tasklog(`uuid`, `set`, `sdss_id`, `question_id`, `spectra_id`, `answer`, `ip`) VALUES ({uuid}, {sdss_id}, {question_id}, {spectra_id}, {answer}, {ip})")
         .on('uuid -> uuid)
+        .on('set -> set)
         .on('sdss_id -> sdss_id)
         .on('question_id -> question_id)
         .on('spectra_id -> spectra_id)
@@ -150,12 +153,13 @@ object Tasklog {
    */
   val simpleTasklog = {
     get[String]("uuid") ~ // get[Option[Int]]
+      get[Int]("set") ~
       get[BigDecimal]("sdss_id") ~
       get[Int]("question_id") ~
       get[Int]("spectra_id") ~
       get[String]("answer") ~
       get[String]("ip") map {
-        case uuid ~ sdss_id ~ question_id ~ spectra_id ~ answer ~ ip => Tasklog(uuid, sdss_id, question_id, spectra_id, answer, ip)
+        case uuid ~ set ~ sdss_id ~ question_id ~ spectra_id ~ answer ~ ip => Tasklog(uuid, set, sdss_id, question_id, spectra_id, answer, ip)
       }
   }
 
